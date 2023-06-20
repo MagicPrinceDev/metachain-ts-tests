@@ -19,7 +19,7 @@ export const METACHAIN_BUILD = process.env.METACHAIN_BUILD || "release";
 export const METACHAIN_BACKEND_TYPE = process.env.METACHAIN_BACKEND_TYPE || "key-value";
 
 export const BINARY_PATH = process.env.DEFID;
-export const SPAWNING_TIME = 10000;
+export const SPAWNING_TIME = 60000;
 
 const PRIV_KEYS = [
 	{
@@ -79,6 +79,7 @@ export async function generateNowait(client: JsonRpcClient) {
 	const response = await client.call("generatetoaddress", [1, address, 1], "number");
 }
 
+let tmpDir;
 export async function startMetachainNode(provider?: string): Promise<{
 	web3: Web3;
 	binary: ChildProcess;
@@ -92,7 +93,7 @@ export async function startMetachainNode(provider?: string): Promise<{
 
 	const client = new JsonRpcClient(`http://test:test@127.0.0.1:${RPC_PORT}`);
 
-	const tmpDir = `/tmp/${uuidv4()}`;
+	tmpDir = `/tmp/${uuidv4()}`;
 	fs.mkdirSync(tmpDir);
 
 	const genesisPath = process.env.GENESIS_PATH || `${process.cwd()}/genesis.json`
@@ -158,12 +159,12 @@ export async function startMetachainNode(provider?: string): Promise<{
 			console.error(`Logs:`);
 			console.error(binaryLogs.map((chunk) => chunk.toString()).join("\n"));
 			process.exit(1);
-		}, SPAWNING_TIME - 2000);
+		}, SPAWNING_TIME - 15000);
 
 		const onData = async (chunk) => {
-			// if (DISPLAY_LOG) {
-			// 	console.log(chunk.toString());
-			// }
+			if (DISPLAY_LOG) {
+				console.log(chunk.toString());
+			}
 			binaryLogs.push(chunk);
 
 			if (chunk.toString().match(/addcon thread start/)) {
@@ -207,7 +208,6 @@ export async function startMetachainNode(provider?: string): Promise<{
 		chainId: CHAIN_ID,
 		name: "metachain-dev",
 	});
-
 	return { web3, binary, ethersjs, client };
 }
 
@@ -238,12 +238,20 @@ export function describeWithMetachain(
 			}
 		});
 
-		after(async function () {
-			this.timeout(5000)
+		after(function (done) {
+			this.timeout(30000)
+
+			const isRunning = require('is-running')
+			const interval = setInterval(function() {
+				if (!isRunning(binary.pid)) {
+					clearInterval(interval);
+					fs.rmdirSync(tmpDir, { recursive: true })
+					done();
+				}
+			}, 500);
 
 			binary.kill();
-			await new Promise<void>((resolve) => setTimeout(() => resolve(), 2000));
-		  });
+		});
 
 		cb(context);
 	});
