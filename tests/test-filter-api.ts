@@ -53,11 +53,9 @@ describeWithMetachain("Metachain RPC (EthFilterApi)", (context) => {
 		expect(createFilter.result).to.be.eq("0x3");
 	});
 
-	step("should return unsupported error for Pending Transaction filter creation", async function () {
-		let r = await customRequest(context.web3, "eth_newPendingTransactionFilter", []);
-		expect(r.error).to.include({
-			message: "Method not available.",
-		});
+	step("should support Pending Transaction filter creation", async function () {
+		let createFilter = await customRequest(context.web3, "eth_newPendingTransactionFilter", []);
+		expect(createFilter.result).to.be.eq("0x4");
 	});
 
 	step("should return responses for Block filter polling.", async function () {
