@@ -60,7 +60,7 @@ describeWithMetachain("Metachain RPC (EthFilterApi)", (context) => {
 
 	step("should return responses for Block filter polling.", async function () {
 		let block = await context.web3.eth.getBlock(0);
-		let poll = await customRequest(context.web3, "eth_getFilterChanges", ["0x3"]);
+		let poll = await customRequest(context.web3, "eth_getFilterChanges", ["0x4"]);
 
 		expect(poll.result.length).to.be.eq(1);
 		expect(poll.result[0]).to.be.eq(block.hash);

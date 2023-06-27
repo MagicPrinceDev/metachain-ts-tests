@@ -75,6 +75,7 @@ describeWithMetachain("Metachain RPC (Contract)", (context) => {
 				{
 					data: TEST_CONTRACT_BYTECODE,
 				},
+
 				nonExistingBlockNumber
 			)
 		).to.eventually.rejectedWith("header not found");

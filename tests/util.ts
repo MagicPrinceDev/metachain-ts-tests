@@ -11,7 +11,7 @@ import { JsonRpcClient } from "@defichain/jellyfish-api-jsonrpc";
 export const PORT = 19555;
 export const RPC_PORT = 19554;
 export const ETH_PORT = 19551;
-export const WS_PORT = 19933;
+export const WS_PORT = 9999;
 
 export const DISPLAY_LOG = process.env.RUST_LOG || false;
 export const METACHAIN_LOG = process.env.METACHAIN_LOG || "info";
@@ -165,6 +165,11 @@ export async function startMetachainNode(provider?: string): Promise<{
 			if (DISPLAY_LOG) {
 				console.log(chunk.toString());
 			}
+
+			// if (chunk.toString().match(/DEBUG/)) {
+			// 	console.log(chunk.toString());
+			// }
+
 			binaryLogs.push(chunk);
 
 			if (chunk.toString().match(/addcon thread start/)) {

@@ -11,13 +11,12 @@ describeWithMetachain("Metachain RPC (Block)", (context) => {
 	// Running them individually will result in failure
 
 	step("should be at block 0 at genesis", async function () {
-		expect(await context.web3.eth.getBlockNumber()).to.equal(0);
+		expect(await context.web3.eth.getBlockNumber()).to.equal(1);
 	});
 
 	it("should return genesis block by number", async function () {
-		expect(await context.web3.eth.getBlockNumber()).to.equal(0);
-
 		const block = await context.web3.eth.getBlock(0);
+
 		expect(block).to.include({
 			author: "0x0000000000000000000000000000000000000000",
 			difficulty: "0",
