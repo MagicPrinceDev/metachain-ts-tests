@@ -134,6 +134,7 @@ export async function startMetachainNode(provider?: string): Promise<{
 		"-fortcanningepilogueheight=96",
 		"-grandcentralheight=101",
 		"-nextnetworkupgradeheight=105",
+		"-changiintermediateheight=105",
 		"-subsidytest=1",
 		"-txindex=1",
 	];
@@ -185,13 +186,13 @@ export async function startMetachainNode(provider?: string): Promise<{
 
 				await generate(client, 105);
 
-				await client.masternode.setGov({
-					ATTRIBUTES: {
-						// Enable evm
-						"v0/params/feature/evm": "true",
-					},
-				});
-				await generate(client, 1);
+				// await client.masternode.setGov({
+				// 	ATTRIBUTES: {
+				// 		// Enable evm
+				// 		"v0/params/feature/evm": "true",
+				// 	},
+				// });
+				// await generate(client, 1);
 
 				resolve();
 			}
