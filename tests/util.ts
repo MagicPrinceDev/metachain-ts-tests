@@ -186,13 +186,13 @@ export async function startMetachainNode(provider?: string): Promise<{
 
 				await generate(client, 105);
 
-				// await client.masternode.setGov({
-				// 	ATTRIBUTES: {
-				// 		// Enable evm
-				// 		"v0/params/feature/evm": "true",
-				// 	},
-				// });
-				// await generate(client, 1);
+				await client.masternode.setGov({
+					ATTRIBUTES: {
+						// Enable evm
+						"v0/params/feature/evm": "true",
+					},
+				});
+				await generate(client, 1);
 
 				resolve();
 			}
