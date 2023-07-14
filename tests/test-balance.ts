@@ -9,7 +9,7 @@ describeWithMetachain('Metachain RPC (Balance)', (context) => {
 
 	step('genesis balance is setup correctly', async function () {
 		const balance = await context.web3.eth.getBalance(GENESIS_ACCOUNT);
-		expect(await context.web3.eth.getBalance(GENESIS_ACCOUNT)).to.equal(GENESIS_ACCOUNT_BALANCE);
+		expect(balance).to.equal(GENESIS_ACCOUNT_BALANCE);
 	});
 
 	step('balance to be updated after transfer', async function () {
