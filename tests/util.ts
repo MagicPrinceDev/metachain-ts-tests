@@ -4,7 +4,7 @@ import { JsonRpcResponse } from 'web3-core-helpers';
 import { spawn, ChildProcess } from 'child_process';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
-import { NODE_BINARY_NAME, CHAIN_ID } from './config';
+import { NODE_BINARY_NAME, CHAIN_ID, GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY } from './config';
 
 import { JsonRpcClient } from '@defichain/jellyfish-api-jsonrpc';
 
@@ -51,6 +51,29 @@ export async function customRequest(web3: Web3, method: string, params: any[]) {
 			}
 		);
 	});
+}
+
+export async function sendTransaction(
+	context: { web3: Web3; client: JsonRpcClient },
+	nonce: number,
+	value: string,
+	gasPrice: string,
+	gas = '0x100000'
+) {
+	const tx = await context.web3.eth.accounts.signTransaction(
+		{
+			from: GENESIS_ACCOUNT,
+			to: GENESIS_ACCOUNT,
+			value: value,
+			gasPrice: gasPrice,
+			gas: gas,
+			nonce: nonce,
+		},
+		GENESIS_ACCOUNT_PRIVATE_KEY
+	);
+
+	await customRequest(context.web3, 'eth_sendRawTransaction', [tx.rawTransaction]);
+	return tx;
 }
 
 // Create a block and finalize it.
