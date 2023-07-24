@@ -65,7 +65,7 @@ describeWithMetachain('Metachain RPC (Contract Methods)', (context) => {
 	});
 
 	// TODO Fix handle BLOCK_HASH_COUNT
-	it.skip('should get correct environmental block hash', async function () {
+	it('should get correct environmental block hash', async function () {
 		this.timeout(20000);
 		// Solidity `blockhash` is expected to return the ethereum block hash at a given height.
 		const contract = new context.web3.eth.Contract(TEST_CONTRACT_ABI, FIRST_CONTRACT_ADDRESS, {
@@ -94,7 +94,7 @@ describeWithMetachain('Metachain RPC (Contract Methods)', (context) => {
 	});
 
 	// Requires error handling
-	it.skip('should fail for missing parameters', async function () {
+	it('should fail for missing parameters', async function () {
 		const contract = new context.web3.eth.Contract(
 			[{ ...TEST_CONTRACT_ABI[0], inputs: [] }],
 			FIRST_CONTRACT_ADDRESS,
@@ -112,7 +112,7 @@ describeWithMetachain('Metachain RPC (Contract Methods)', (context) => {
 	});
 
 	// Requires error handling
-	it.skip('should fail for too many parameters', async function () {
+	it('should fail for too many parameters', async function () {
 		const contract = new context.web3.eth.Contract(
 			[
 				{
@@ -138,7 +138,7 @@ describeWithMetachain('Metachain RPC (Contract Methods)', (context) => {
 	});
 
 	// Requires error handling
-	it.skip('should fail for invalid parameters', async function () {
+	it('should fail for invalid parameters', async function () {
 		const contract = new context.web3.eth.Contract(
 			[
 				{
