@@ -13,4 +13,4 @@ export const CHAIN_ID = 1133;
 export const BLOCK_TIMESTAMP = 6; // 6 seconds per block
 export const BLOCK_HASH_COUNT = 256;
 export const EXISTENTIAL_DEPOSIT = 500; // The minimum amount required to keep an account open
-export const ETH_BLOCK_GAS_LIMIT = 30000000; // The same configuration as runtime
+export const ETH_BLOCK_GAS_LIMIT = 30_000_000; // The same configuration as runtime
