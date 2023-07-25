@@ -132,12 +132,12 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 			data: Test.bytecode,
 			gasPrice: '0x0',
 		});
-		expect(result).to.equal(197690);
+		expect(result).to.equal(196657);
 		result = await context.web3.eth.estimateGas({
 			from: GENESIS_ACCOUNT,
 			data: Test.bytecode,
 		});
-		expect(result).to.equal(197690);
+		expect(result).to.equal(196657);
 	});
 
 	it('tx gas limit below ETH_BLOCK_GAS_LIMIT', async function () {
