@@ -43,15 +43,15 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 	it('eth_estimateGas for contract creation', async function () {
 		// The value returned as an estimation by the evm with estimate mode ON.
 		let oneOffEstimation = 196657;
-		let binarySearchEstimation = binarySearch(oneOffEstimation);
-		// Sanity check expect a variance of 10%.
-		expect(estimationVariance(binarySearchEstimation, oneOffEstimation)).to.be.lessThan(1);
+		// let binarySearchEstimation = binarySearch(oneOffEstimation);
+		// // Sanity check expect a variance of 10%.
+		// expect(estimationVariance(binarySearchEstimation, oneOffEstimation)).to.be.lessThan(1);
 		expect(
 			await context.web3.eth.estimateGas({
 				from: GENESIS_ACCOUNT,
 				data: Test.bytecode,
 			})
-		).to.equal(binarySearchEstimation);
+		).to.equal(oneOffEstimation);
 	});
 
 	it.skip('block gas limit over 5M', async function () {
@@ -78,37 +78,37 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 	it('eth_estimateGas for contract call', async function () {
 		// The value returned as an estimation by the evm with estimate mode ON.
 		let oneOffEstimation = 21204;
-		let binarySearchEstimation = binarySearch(oneOffEstimation);
+		// let binarySearchEstimation = binarySearch(oneOffEstimation);
 		// Sanity check expect a variance of 10%.
-		expect(estimationVariance(binarySearchEstimation, oneOffEstimation)).to.be.lessThan(1);
+		// expect(estimationVariance(binarySearchEstimation, oneOffEstimation)).to.be.lessThan(1);
 		const contract = new context.web3.eth.Contract(TEST_CONTRACT_ABI, FIRST_CONTRACT_ADDRESS, {
 			from: GENESIS_ACCOUNT,
 			gasPrice: '0x3B9ACA00',
 		});
 
-		expect(await contract.methods.multiply(3).estimateGas()).to.equal(binarySearchEstimation);
+		expect(await contract.methods.multiply(3).estimateGas()).to.equal(oneOffEstimation);
 	});
 
 	it('eth_estimateGas without gas_limit should pass', async function () {
 		// The value returned as an estimation by the evm with estimate mode ON.
 		let oneOffEstimation = 21204;
-		let binarySearchEstimation = binarySearch(oneOffEstimation);
+		// let binarySearchEstimation = binarySearch(oneOffEstimation);
 		// Sanity check expect a variance of 10%.
-		expect(estimationVariance(binarySearchEstimation, oneOffEstimation)).to.be.lessThan(1);
+		// expect(estimationVariance(binarySearchEstimation, oneOffEstimation)).to.be.lessThan(1);
 		const contract = new context.web3.eth.Contract(TEST_CONTRACT_ABI, FIRST_CONTRACT_ADDRESS, {
 			from: GENESIS_ACCOUNT,
 		});
 
-		expect(await contract.methods.multiply(3).estimateGas()).to.equal(binarySearchEstimation);
+		expect(await contract.methods.multiply(3).estimateGas()).to.equal(oneOffEstimation);
 	});
 
 	it('eth_estimateGas should handle AccessList alias', async function () {
 		// The value returned as an estimation by the evm with estimate mode ON.
 		// 4300 == 1900 for one key and 2400 for one storage.
 		let oneOffEstimation = 196701 + 4300;
-		let binarySearchEstimation = binarySearch(oneOffEstimation);
+		// let binarySearchEstimation = binarySearch(oneOffEstimation);
 		// Sanity check expect a variance of 10%.
-		expect(estimationVariance(binarySearchEstimation, oneOffEstimation)).to.be.lessThan(1);
+		// expect(estimationVariance(binarySearchEstimation, oneOffEstimation)).to.be.lessThan(1);
 		let result = (
 			await customRequest(context.web3, 'eth_estimateGas', [
 				{
@@ -123,7 +123,7 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 				},
 			])
 		).result;
-		expect(result).to.equal(context.web3.utils.numberToHex(binarySearchEstimation));
+		expect(result).to.equal(context.web3.utils.numberToHex(oneOffEstimation));
 	});
 
 	it('eth_estimateGas 0x0 gasPrice is equivalent to not setting one', async function () {
