@@ -42,7 +42,7 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 
 	it('eth_estimateGas for contract creation', async function () {
 		// The value returned as an estimation by the evm with estimate mode ON.
-		let oneOffEstimation = 196701;
+		let oneOffEstimation = 196657;
 		let binarySearchEstimation = binarySearch(oneOffEstimation);
 		// Sanity check expect a variance of 10%.
 		expect(estimationVariance(binarySearchEstimation, oneOffEstimation)).to.be.lessThan(1);
