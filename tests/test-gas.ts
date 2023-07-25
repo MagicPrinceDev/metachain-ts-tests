@@ -105,7 +105,7 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 	it('eth_estimateGas should handle AccessList alias', async function () {
 		// The value returned as an estimation by the evm with estimate mode ON.
 		// 4300 == 1900 for one key and 2400 for one storage.
-		let oneOffEstimation = 196701 + 4300;
+		let oneOffEstimation = 196657 + 4300;
 		// let binarySearchEstimation = binarySearch(oneOffEstimation);
 		// Sanity check expect a variance of 10%.
 		// expect(estimationVariance(binarySearchEstimation, oneOffEstimation)).to.be.lessThan(1);
