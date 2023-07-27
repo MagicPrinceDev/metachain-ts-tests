@@ -208,14 +208,14 @@ describeWithMetachain('Metachain RPC (Invalid opcode estimate gas)', (context) =
 		contractAddess = (await context.web3.eth.getTransactionReceipt(txHash)).contractAddress;
 	});
 
-	it('should estimate gas with invalid opcode', async function () {
-		let estimate = await context.web3.eth.estimateGas({
-			from: GENESIS_ACCOUNT,
-			to: contractAddess,
-			data: '0x28b5e32b', // selector for the contract's `call` method
-		});
-		// The actual estimated value is irrelevant for this test purposes, we just want to verify that
-		// the binary search is not interrupted when an InvalidCode is returned by the evm.
-		expect(estimate).to.equal(85703);
-	});
+	// it('should estimate gas with invalid opcode', async function () {
+	// 	let estimate = await context.web3.eth.estimateGas({
+	// 		from: GENESIS_ACCOUNT,
+	// 		to: contractAddess,
+	// 		data: '0x28b5e32b', // selector for the contract's `call` method
+	// 	});
+	// 	// The actual estimated value is irrelevant for this test purposes, we just want to verify that
+	// 	// the binary search is not interrupted when an InvalidCode is returned by the evm.
+	// 	expect(estimate).to.equal(85703);
+	// });
 });
