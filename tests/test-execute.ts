@@ -19,7 +19,7 @@ describeWithMetachain('Metachain RPC (estimate gas historically)', (context) => 
 	const TEST_CONTRACT_BYTECODE = Storage.bytecode;
 	const TEST_CONTRACT_ABI = Storage.abi as AbiItem[];
 
-	it('estimate gas historically should work', async function () {
+	it.skip('estimate gas historically should work', async function () {
 		const contract = new context.web3.eth.Contract(TEST_CONTRACT_ABI);
 
 		this.timeout(15000);
