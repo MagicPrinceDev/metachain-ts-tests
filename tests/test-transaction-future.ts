@@ -4,7 +4,7 @@ import { step } from 'mocha-steps';
 import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY } from './config';
 import { generate, describeWithMetachain, customRequest } from './util';
 
-describeWithMetachain('Metachain RPC (Transaction Cancellation)', (context) => {
+describeWithMetachain('Metachain RPC (Transaction Future)', (context) => {
 	async function sendTransaction(context, nonce: number, value: string, gasPrice = '0x3B9ACA03') {
 		const tx = await context.web3.eth.accounts.signTransaction(
 			{
