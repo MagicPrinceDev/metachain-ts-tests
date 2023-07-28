@@ -18,23 +18,20 @@ describeWithMetachain('Metachain RPC (Block)', (context) => {
 	it('should return genesis block by number', async function () {
 		const { result: block } = await customRequest(context.web3, 'eth_getBlockByNumber', [0]);
 		expect(block).to.include({
-			// NOTE(canonbrother): author is removed at block
-			// author: "0x0000000000000000000000000000000000000000",
 			difficulty: '0x20000',
 			extraData: '0x',
-			// gasLimit: `0x${ETH_BLOCK_GAS_LIMIT.toString(16)}`, // TODO(canonbrother): inspect genesis gas limit, it should be a default gas limit value
+			gasLimit: '0x2fefd8',
 			gasUsed: '0x0',
 			logsBloom:
 				'0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
 			miner: '0x0000000000000000000000000000000000000000',
 			number: '0x0',
 			receiptsRoot: '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
-			// size: 505,
-			// timestamp: 0,
+			size: '0x200',
 			totalDifficulty: '0x0',
 		});
 
-		// expect(block.nonce).to.eql("0x0000000000000000"); // 0x78cc16f7b4f65485  TODO(canonbrother): inspect genesis nonce
+		expect(block.nonce).to.eql('0x78cc16f7b4f65485');
 		expect(block.hash).to.be.a('string').lengthOf(66);
 		expect(block.parentHash).to.be.a('string').lengthOf(66);
 		expect(block.timestamp).to.be.a('string');
@@ -42,30 +39,22 @@ describeWithMetachain('Metachain RPC (Block)', (context) => {
 		previousBlock = block;
 	});
 
-	// TODO(canonbrother): eth_getBlockByHash(genesis.hash)
-	it.skip('genesis block should be already available by hash', async function () {
+	it('genesis block should be already available by hash', async function () {
 		const { result: block } = await customRequest(context.web3, 'eth_getBlockByHash', [previousBlock.hash]);
 		expect(block).to.include({
-			// author: "0x0000000000000000000000000000000000000000",
-			difficulty: '0',
+			difficulty: '0x20000',
 			extraData: '0x',
-			gasLimit: ETH_BLOCK_GAS_LIMIT,
+			gasLimit: '0x2fefd8',
 			gasUsed: '0x0',
 			logsBloom:
 				'0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
 			miner: '0x0000000000000000000000000000000000000000',
-			number: '0x1',
+			number: '0x0',
 			receiptsRoot: '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
-			// size: 505,
-			// timestamp: 0,
+			size: '0x200',
 			totalDifficulty: '0x0',
-			parentHash: previousBlock.hash,
 		});
 
-		expect(block.nonce).to.eql('0x0000000000000000');
-		expect(block.hash).to.be.a('string').lengthOf(66);
-		expect(block.parentHash).to.be.a('string').lengthOf(66);
-		expect(block.timestamp).to.be.a('number');
 		previousBlock = block;
 	});
 
