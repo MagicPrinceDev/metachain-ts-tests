@@ -27,10 +27,10 @@ describeWithMetachain('Metachain RPC (Transaction Future)', (context) => {
 
 		// usual
 		{
-			const txHash0 = await sendTransaction(context, 0, '0x01', '0x3B9ACA03'); // 1_000_000_003
-			const txHash1 = await sendTransaction(context, 1, '0x00', '0x3B9ACA03'); // 1_000_000_003
-			const txHash2 = await sendTransaction(context, 2, '0x00', '0x3B9ACA03'); // 1_000_000_003
-			const txHash9 = await sendTransaction(context, 9, '0x00', '0x3B9ACA03'); // 1_000_000_003
+			const txHash0 = await sendTransaction(context, 0, '0x01', '0x2540be403'); // 10_000_000_003
+			const txHash1 = await sendTransaction(context, 1, '0x00', '0x2540be403'); // 10_000_000_003
+			const txHash2 = await sendTransaction(context, 2, '0x00', '0x2540be403'); // 10_000_000_003
+			const txHash9 = await sendTransaction(context, 9, '0x00', '0x2540be403'); // 10_000_000_003
 
 			await generate(context.client, 1);
 
