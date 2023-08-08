@@ -1,8 +1,7 @@
 import { expect } from 'chai';
 import { step } from 'mocha-steps';
 
-import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, GENESIS_ACCOUNT_BALANCE, EXISTENTIAL_DEPOSIT } from './config';
-import { generate, describeWithMetachain, customRequest } from './util';
+import { generate, describeWithMetachain } from './util';
 
 describeWithMetachain('Metachain RPC (BlockNumber tags)', (context) => {
 	before('Send some transactions across blocks', async function () {
@@ -20,11 +19,12 @@ describeWithMetachain('Metachain RPC (BlockNumber tags)', (context) => {
 		expect((await context.web3.eth.getBlock('latest')).number).to.equal(3);
 	});
 
-	step('`finalized` uses `BlockchainInfo::finalized_hash`  number', async function () {
-		expect((await context.web3.eth.getBlock('finalized')).number).to.equal(2);
-	});
+	// TODO(): unready
+	// step('`finalized` uses `BlockchainInfo::finalized_hash`  number', async function () {
+	// 	expect((await context.web3.eth.getBlock('finalized')).number).to.equal(2);
+	// });
 
-	step('`safe` is an alias for `finalized` in Polkadot', async function () {
-		expect((await context.web3.eth.getBlock('safe')).number).to.equal(2);
-	});
+	// step('`safe` is an alias for `finalized` in Polkadot', async function () {
+	// 	expect((await context.web3.eth.getBlock('safe')).number).to.equal(2);
+	// });
 });

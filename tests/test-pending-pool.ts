@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY } from './config';
+import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, INITIAL_BASE_FEE } from './config';
 import { generate, customRequest, describeWithMetachain } from './util';
 
 describeWithMetachain('Metachain RPC (Pending Pool)', (context) => {
@@ -65,7 +65,7 @@ describeWithMetachain('Metachain RPC (Pending Transaction Count)', (context) => 
 					from: GENESIS_ACCOUNT,
 					to: TEST_ACCOUNT,
 					value: '0x200', // Must be higher than ExistentialDeposit
-					gasPrice: '0x3B9ACA00',
+					gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 					gas: '0x100000',
 					nonce: nonce,
 				},
@@ -75,7 +75,7 @@ describeWithMetachain('Metachain RPC (Pending Transaction Count)', (context) => 
 			return (await customRequest(context.web3, 'eth_sendRawTransaction', [tx.rawTransaction])).result;
 		};
 
-		// TODO handle "pending" block number
+		// TODO(): handle "pending" block number
 		// {
 		// 	const pendingTransactionCount = (
 		// 		await customRequest(context.web3, "eth_getBlockTransactionCountByNumber", ["pending"])
@@ -96,7 +96,7 @@ describeWithMetachain('Metachain RPC (Pending Transaction Count)', (context) => 
 		await generate(context.client, 1);
 
 		{
-			// TODO handle "pending" block number
+			// TODO(): handle "pending" block number
 			// const pendingTransactionCount = (
 			// 	await customRequest(context.web3, "eth_getBlockTransactionCountByNumber", ["pending"])
 			// ).result;
@@ -112,7 +112,7 @@ describeWithMetachain('Metachain RPC (Pending Transaction Count)', (context) => 
 			await sendTransaction();
 		}
 
-		// TODO handle "pending" block number
+		// TODO(): handle "pending" block number
 		// {
 		// 	const pendingTransactionCount = (
 		// 		await customRequest(context.web3, "eth_getBlockTransactionCountByNumber", ["pending"])
@@ -123,7 +123,7 @@ describeWithMetachain('Metachain RPC (Pending Transaction Count)', (context) => 
 		await generate(context.client, 1);
 
 		{
-			// TODO handle "pending" block number
+			// TODO(): handle "pending" block number
 			// const pendingTransactionCount = (
 			// 	await customRequest(context.web3, "eth_getBlockTransactionCountByNumber", ["pending"])
 			// ).result;

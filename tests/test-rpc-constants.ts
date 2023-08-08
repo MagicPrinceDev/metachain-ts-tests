@@ -20,7 +20,7 @@ describeWithMetachain('Metachain RPC (Constant)', (context) => {
 		expect(accounts.length).to.equal(4);
 	});
 
-	// author is removed on block struct
+	// NOTE(): author is removed on block struct
 	// it('block author should be 0x0000000000000000000000000000000000000000', async function () {
 	// 	// This address `0x1234567890` is hardcoded into the runtime find_author
 	// 	// as we are running manual sealing consensus.
