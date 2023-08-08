@@ -177,21 +177,22 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 		expect((createReceipt as any).blockHash).to.be.not.null;
 	});
 
-	// Diff err msg
-	// it('tx gas limit larger ETH_BLOCK_GAS_LIMIT', async function () {
-	// 	const tx = await context.web3.eth.accounts.signTransaction(
-	// 		{
-	// 			from: GENESIS_ACCOUNT,
-	// 			data: Test.bytecode,
-	// 			gas: ETH_BLOCK_GAS_LIMIT + 1,
-	// 			gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
-	// 		},
-	// 		GENESIS_ACCOUNT_PRIVATE_KEY
-	// 	);
-	// 	const createReceipt = await customRequest(context.web3, 'eth_sendRawTransaction', [tx.rawTransaction]);
-	// 	await generate(context.client, 1);
-	// 	expect((createReceipt as any).error.message).to.equal('exceeds block gas limit');
-	// });
+	it('tx gas limit larger ETH_BLOCK_GAS_LIMIT', async function () {
+		const tx = await context.web3.eth.accounts.signTransaction(
+			{
+				from: GENESIS_ACCOUNT,
+				data: Test.bytecode,
+				gas: ETH_BLOCK_GAS_LIMIT + 1,
+				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
+			},
+			GENESIS_ACCOUNT_PRIVATE_KEY
+		);
+		const createReceipt = await customRequest(context.web3, 'eth_sendRawTransaction', [tx.rawTransaction]);
+		await generate(context.client, 1);
+		// expect((createReceipt as any).error.message).to.equal('exceeds block gas limit');
+		const errMsg = `Custom error: Could not publish raw transaction: ${tx.rawTransaction} reason: Test EvmTxTx execution failed:\nevm tx failed to validate gas limit higher than MAX_GAS_PER_BLOCK`;
+		expect((createReceipt as any).error.message).to.equal(errMsg);
+	});
 });
 
 describeWithMetachain('Metachain RPC (Invalid opcode estimate gas)', (context) => {
