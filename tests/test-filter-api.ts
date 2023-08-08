@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { step } from 'mocha-steps';
 
-import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY } from './config';
+import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, INITIAL_BASE_FEE } from './config';
 import { generate, generateNowait, describeWithMetachain, customRequest } from './util';
 
 describeWithMetachain('Metachain RPC (EthFilterApi)', (context) => {
@@ -14,7 +14,7 @@ describeWithMetachain('Metachain RPC (EthFilterApi)', (context) => {
 				from: GENESIS_ACCOUNT,
 				data: TEST_CONTRACT_BYTECODE,
 				value: '0x00',
-				gasPrice: '0x3B9ACA00',
+				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 				gas: '0x100000',
 			},
 			GENESIS_ACCOUNT_PRIVATE_KEY

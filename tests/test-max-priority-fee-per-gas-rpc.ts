@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { expect } from 'chai';
 import { step } from 'mocha-steps';
 
-import { CHAIN_ID } from './config';
+import { CHAIN_ID, INITIAL_BASE_FEE } from './config';
 import { generate, describeWithMetachain, customRequest, sendTransaction } from './util';
 
 // We use ethers library in this test as apparently web3js's types are not fully EIP-1559 compliant yet.
@@ -17,7 +17,7 @@ describeWithMetachain('Metachain RPC (Max Priority Fee Per Gas)', (context) => {
 				await sendTransaction(context, {
 					to: '0x0000000000000000000000000000000000000000',
 					data: '0x',
-					maxFeePerGas: '0x3B9ACA00',
+					maxFeePerGas: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 					maxPriorityFeePerGas: context.web3.utils.numberToHex(priority_fees[p]),
 					nonce: nonce,
 					gas: '0x5208',

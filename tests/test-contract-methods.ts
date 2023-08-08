@@ -8,6 +8,7 @@ import {
 	FIRST_CONTRACT_ADDRESS,
 	BLOCK_HASH_COUNT,
 	ETH_BLOCK_GAS_LIMIT,
+	INITIAL_BASE_FEE,
 } from './config';
 import { generate, generateNowait, customRequest, describeWithMetachain } from './util';
 
@@ -25,7 +26,7 @@ describeWithMetachain('Metachain RPC (Contract Methods)', (context) => {
 				from: GENESIS_ACCOUNT,
 				data: TEST_CONTRACT_BYTECODE,
 				value: '0x00',
-				gasPrice: '0x3B9ACA00',
+				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 				gas: '0x100000',
 			},
 			GENESIS_ACCOUNT_PRIVATE_KEY
@@ -46,7 +47,7 @@ describeWithMetachain('Metachain RPC (Contract Methods)', (context) => {
 	it('should return contract method result', async function () {
 		const contract = new context.web3.eth.Contract(TEST_CONTRACT_ABI, FIRST_CONTRACT_ADDRESS, {
 			from: GENESIS_ACCOUNT,
-			gasPrice: '0x3B9ACA00',
+			gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 		});
 
 		expect(await contract.methods.multiply(3).call()).to.equal('21');
@@ -55,7 +56,7 @@ describeWithMetachain('Metachain RPC (Contract Methods)', (context) => {
 		// Solidity `block.number` is expected to return the same height at which the runtime call was made.
 		const contract = new context.web3.eth.Contract(TEST_CONTRACT_ABI, FIRST_CONTRACT_ADDRESS, {
 			from: GENESIS_ACCOUNT,
-			gasPrice: '0x3B9ACA00',
+			gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 		});
 		let block = await context.web3.eth.getBlock('latest');
 		expect(await contract.methods.currentBlock().call()).to.eq(block.number.toString());
@@ -70,7 +71,7 @@ describeWithMetachain('Metachain RPC (Contract Methods)', (context) => {
 		// Solidity `blockhash` is expected to return the ethereum block hash at a given height.
 		const contract = new context.web3.eth.Contract(TEST_CONTRACT_ABI, FIRST_CONTRACT_ADDRESS, {
 			from: GENESIS_ACCOUNT,
-			gasPrice: '0x3B9ACA00',
+			gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 		});
 		let number = (await context.web3.eth.getBlock('latest')).number;
 		let last = number + BLOCK_HASH_COUNT;
@@ -88,7 +89,7 @@ describeWithMetachain('Metachain RPC (Contract Methods)', (context) => {
 	it('should get correct environmental block gaslimit', async function () {
 		const contract = new context.web3.eth.Contract(TEST_CONTRACT_ABI, FIRST_CONTRACT_ADDRESS, {
 			from: GENESIS_ACCOUNT,
-			gasPrice: '0x3B9ACA00',
+			gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 		});
 		expect(await contract.methods.gasLimit().call()).to.eq(ETH_BLOCK_GAS_LIMIT.toString());
 	});
@@ -100,7 +101,7 @@ describeWithMetachain('Metachain RPC (Contract Methods)', (context) => {
 			FIRST_CONTRACT_ADDRESS,
 			{
 				from: GENESIS_ACCOUNT,
-				gasPrice: '0x3B9ACA00',
+				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 			}
 		);
 		await contract.methods
@@ -126,7 +127,7 @@ describeWithMetachain('Metachain RPC (Contract Methods)', (context) => {
 			FIRST_CONTRACT_ADDRESS,
 			{
 				from: GENESIS_ACCOUNT,
-				gasPrice: '0x3B9ACA00',
+				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 			}
 		);
 		await contract.methods
@@ -147,7 +148,7 @@ describeWithMetachain('Metachain RPC (Contract Methods)', (context) => {
 				},
 			],
 			FIRST_CONTRACT_ADDRESS,
-			{ from: GENESIS_ACCOUNT, gasPrice: '0x3B9ACA00' }
+			{ from: GENESIS_ACCOUNT, gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE) }
 		);
 		await contract.methods
 			.multiply('0x0123456789012345678901234567890123456789')

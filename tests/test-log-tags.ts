@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { step } from 'mocha-steps';
 import { TransactionReceipt } from 'web3-core';
 
-import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY } from './config';
+import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, INITIAL_BASE_FEE } from './config';
 import { generate, describeWithMetachain, customRequest } from './util';
 
 describeWithMetachain('Metachain RPC (Log BlockNumber tags)', (context) => {
@@ -17,7 +17,7 @@ describeWithMetachain('Metachain RPC (Log BlockNumber tags)', (context) => {
 				from: GENESIS_ACCOUNT,
 				data: TEST_CONTRACT_BYTECODE,
 				value: '0x00',
-				gasPrice: '0x3B9ACA00',
+				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 				gas: '0x100000',
 			},
 			GENESIS_ACCOUNT_PRIVATE_KEY

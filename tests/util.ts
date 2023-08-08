@@ -55,7 +55,7 @@ export async function customRequest(web3: Web3, method: string, params: any[]) {
 }
 
 export async function sendTransaction(context: { web3: Web3; client: JsonRpcClient }, payload?: TransactionConfig) {
-	let count = !payload.nonce ? await context.web3.eth.getTransactionCount(GENESIS_ACCOUNT) : 0;
+	let count = payload && !payload.nonce ? await context.web3.eth.getTransactionCount(GENESIS_ACCOUNT) : 0;
 
 	const defaultPayload: TransactionConfig = {
 		from: GENESIS_ACCOUNT,
@@ -64,7 +64,7 @@ export async function sendTransaction(context: { web3: Web3; client: JsonRpcClie
 		gas: '0x100000',
 	};
 
-	if (!payload.gasPrice && !payload.maxFeePerGas) {
+	if (payload && !payload.gasPrice && !payload.maxFeePerGas) {
 		defaultPayload.maxFeePerGas = context.web3.utils.numberToHex(INITIAL_BASE_FEE);
 	}
 

@@ -5,7 +5,7 @@ import { AbiItem } from 'web3-utils';
 
 import StateOverrideTest from '../build/contracts/StateOverrideTest.json';
 import Test from '../build/contracts/Test.json';
-import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY } from './config';
+import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, INITIAL_BASE_FEE } from './config';
 import { generate, customRequest, describeWithMetachain } from './util';
 
 chaiUse(chaiAsPromised);
@@ -45,7 +45,7 @@ describeWithMetachain('Metachain RPC (StateOverride)', (context) => {
 				to: contractAddress,
 				data: contract.methods.setAllowance(otherAddress, 10).encodeABI(),
 				gas: '0x100000',
-				gasPrice: '0x3B9ACA00',
+				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 				value: '0x0',
 			},
 			GENESIS_ACCOUNT_PRIVATE_KEY

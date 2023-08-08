@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { AbiItem } from 'web3-utils';
 
 import ExplicitRevertReason from '../build/contracts/ExplicitRevertReason.json';
-import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY } from './config';
+import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, INITIAL_BASE_FEE } from './config';
 import { generate, customRequest, describeWithMetachain } from './util';
 
 describeWithMetachain('Metachain RPC (Revert Reason)', (context) => {
@@ -19,7 +19,7 @@ describeWithMetachain('Metachain RPC (Revert Reason)', (context) => {
 				from: GENESIS_ACCOUNT,
 				data: REVERT_W_MESSAGE_BYTECODE,
 				value: '0x00',
-				gasPrice: '0x3B9ACA00',
+				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 				gas: '0x100000',
 			},
 			GENESIS_ACCOUNT_PRIVATE_KEY
@@ -33,7 +33,7 @@ describeWithMetachain('Metachain RPC (Revert Reason)', (context) => {
 	it('should fail with revert reason', async function () {
 		const contract = new context.web3.eth.Contract(TEST_CONTRACT_ABI, contractAddress, {
 			from: GENESIS_ACCOUNT,
-			gasPrice: '0x3B9ACA00',
+			gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 		});
 		try {
 			await contract.methods.max10(30).call();

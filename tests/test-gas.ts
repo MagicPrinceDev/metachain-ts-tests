@@ -3,7 +3,13 @@ import { AbiItem } from 'web3-utils';
 
 import InvalidOpcode from '../build/contracts/InvalidOpcode.json';
 import Test from '../build/contracts/Test.json';
-import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, FIRST_CONTRACT_ADDRESS, ETH_BLOCK_GAS_LIMIT } from './config';
+import {
+	GENESIS_ACCOUNT,
+	GENESIS_ACCOUNT_PRIVATE_KEY,
+	FIRST_CONTRACT_ADDRESS,
+	ETH_BLOCK_GAS_LIMIT,
+	INITIAL_BASE_FEE,
+} from './config';
 import { describeWithMetachain, generate, customRequest } from './util';
 
 // (!) The implementation must match the one in the rpc handler.
@@ -83,7 +89,7 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 		// expect(estimationVariance(binarySearchEstimation, oneOffEstimation)).to.be.lessThan(1);
 		const contract = new context.web3.eth.Contract(TEST_CONTRACT_ABI, FIRST_CONTRACT_ADDRESS, {
 			from: GENESIS_ACCOUNT,
-			gasPrice: '0x3B9ACA00',
+			gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 		});
 
 		expect(await contract.methods.multiply(3).estimateGas()).to.equal(oneOffEstimation);
@@ -146,7 +152,7 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 				from: GENESIS_ACCOUNT,
 				data: Test.bytecode,
 				gas: ETH_BLOCK_GAS_LIMIT - 1,
-				gasPrice: '0x3B9ACA00',
+				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 			},
 			GENESIS_ACCOUNT_PRIVATE_KEY
 		);
@@ -161,7 +167,7 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 				from: GENESIS_ACCOUNT,
 				data: Test.bytecode,
 				gas: ETH_BLOCK_GAS_LIMIT,
-				gasPrice: '0x3B9ACA00',
+				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 			},
 			GENESIS_ACCOUNT_PRIVATE_KEY
 		);
@@ -178,7 +184,7 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 	// 			from: GENESIS_ACCOUNT,
 	// 			data: Test.bytecode,
 	// 			gas: ETH_BLOCK_GAS_LIMIT + 1,
-	// 			gasPrice: '0x3B9ACA00',
+	// 			gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 	// 		},
 	// 		GENESIS_ACCOUNT_PRIVATE_KEY
 	// 	);
@@ -198,7 +204,7 @@ describeWithMetachain('Metachain RPC (Invalid opcode estimate gas)', (context) =
 				from: GENESIS_ACCOUNT,
 				data: INVALID_OPCODE_BYTECODE,
 				value: '0x00',
-				gasPrice: '0x3B9ACA00',
+				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 				gas: '0x100000',
 			},
 			GENESIS_ACCOUNT_PRIVATE_KEY

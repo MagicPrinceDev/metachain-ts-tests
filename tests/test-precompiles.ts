@@ -2,7 +2,7 @@ import { assert, expect } from 'chai';
 import { AbiItem } from 'web3-utils';
 
 import ECRecoverTests from '../build/contracts/ECRecoverTests.json';
-import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, FIRST_CONTRACT_ADDRESS } from './config';
+import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, FIRST_CONTRACT_ADDRESS, INITIAL_BASE_FEE } from './config';
 import { generate, customRequest, describeWithMetachain } from './util';
 
 describeWithMetachain('Metachain RPC (Precompile)', (context) => {
@@ -18,7 +18,7 @@ describeWithMetachain('Metachain RPC (Precompile)', (context) => {
 				from: GENESIS_ACCOUNT,
 				data: TEST_CONTRACT_BYTECODE,
 				value: '0x00',
-				gasPrice: '0x3B9ACA00',
+				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 				gas: '0x100000',
 			},
 			GENESIS_ACCOUNT_PRIVATE_KEY
@@ -51,7 +51,7 @@ describeWithMetachain('Metachain RPC (Precompile)', (context) => {
 				to: '0000000000000000000000000000000000000005',
 				data: `0x${hash.toString()}${sigPart}`,
 				value: '0x00',
-				gasPrice: '0x3B9ACA00',
+				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 				gas: '0x100000',
 			},
 			GENESIS_ACCOUNT_PRIVATE_KEY
@@ -59,7 +59,7 @@ describeWithMetachain('Metachain RPC (Precompile)', (context) => {
 
 		const contract = new context.web3.eth.Contract(TEST_CONTRACT_ABI, FIRST_CONTRACT_ADDRESS, {
 			from: GENESIS_ACCOUNT,
-			gasPrice: '0x3B9ACA00',
+			gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 		});
 
 		await contract.methods.ecrecover(`0x${hash.toString()}${sigPart}`).call();
