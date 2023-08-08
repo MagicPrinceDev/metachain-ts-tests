@@ -1,7 +1,13 @@
 import { expect } from 'chai';
 import { step } from 'mocha-steps';
 
-import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, GENESIS_ACCOUNT_BALANCE, EXISTENTIAL_DEPOSIT } from './config';
+import {
+	GENESIS_ACCOUNT,
+	GENESIS_ACCOUNT_PRIVATE_KEY,
+	GENESIS_ACCOUNT_BALANCE,
+	EXISTENTIAL_DEPOSIT,
+	INITIAL_BASE_FEE,
+} from './config';
 import { generate, describeWithMetachain, customRequest } from './util';
 
 describeWithMetachain('Metachain RPC (Balance)', (context) => {
@@ -17,7 +23,7 @@ describeWithMetachain('Metachain RPC (Balance)', (context) => {
 		this.timeout(2000);
 
 		const value = '0x200'; // 512, must be higher than ExistentialDeposit
-		const gasPrice = '0x3B9ACA00'; // 1000000000
+		const gasPrice = context.web3.utils.numberToHex(INITIAL_BASE_FEE);
 		const tx = await context.web3.eth.accounts.signTransaction(
 			{
 				from: GENESIS_ACCOUNT,
