@@ -13,7 +13,7 @@ describeWithMetachain('Metachain RPC (State root hash)', (context) => {
 	step('hash should be unique between blocks', async function () {
 		const b1 = await context.web3.eth.getBlock(1);
 
-		await sendTransaction(context, 0, '0x0', '0x3B9ACA00');
+		await sendTransaction(context);
 		await generate(context.client, 1);
 
 		const b2 = await context.web3.eth.getBlock(2);

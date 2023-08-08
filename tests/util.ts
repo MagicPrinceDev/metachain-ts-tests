@@ -54,7 +54,7 @@ export async function customRequest(web3: Web3, method: string, params: any[]) {
 	});
 }
 
-export async function sendTransaction(context: { web3: Web3; client: JsonRpcClient }, payload: TransactionConfig) {
+export async function sendTransaction(context: { web3: Web3; client: JsonRpcClient }, payload?: TransactionConfig) {
 	let count = !payload.nonce ? await context.web3.eth.getTransactionCount(GENESIS_ACCOUNT) : 0;
 
 	const defaultPayload: TransactionConfig = {
