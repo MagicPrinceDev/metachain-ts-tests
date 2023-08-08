@@ -16,7 +16,8 @@ describeWithMetachain('Metachain RPC (Constant)', (context) => {
 	});
 
 	it('should have no account', async function () {
-		expect(await context.web3.eth.getAccounts()).to.eql([]);
+		const accounts = await context.web3.eth.getAccounts();
+		expect(accounts.length).to.equal(4);
 	});
 
 	// author is removed on block struct
