@@ -1,10 +1,11 @@
 import Web3 from 'web3';
 import { ethers } from 'ethers';
 import { JsonRpcResponse } from 'web3-core-helpers';
+import { TransactionConfig } from 'web3-core';
 import { spawn, ChildProcess } from 'child_process';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
-import { NODE_BINARY_NAME, CHAIN_ID, GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY } from './config';
+import { CHAIN_ID, GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, INITIAL_BASE_FEE } from './config';
 
 import { JsonRpcClient } from '@defichain/jellyfish-api-jsonrpc';
 
@@ -53,27 +54,30 @@ export async function customRequest(web3: Web3, method: string, params: any[]) {
 	});
 }
 
-export async function sendTransaction(
-	context: { web3: Web3; client: JsonRpcClient },
-	nonce: number,
-	value: string,
-	gasPrice: string,
-	gas = '0x100000'
-) {
-	const tx = await context.web3.eth.accounts.signTransaction(
+export async function sendTransaction(context: { web3: Web3; client: JsonRpcClient }, payload: TransactionConfig) {
+	let count = !payload.nonce ? await context.web3.eth.getTransactionCount(GENESIS_ACCOUNT) : 0;
+
+	const defaultPayload: TransactionConfig = {
+		from: GENESIS_ACCOUNT,
+		nonce: count,
+		value: '0x00',
+		gas: '0x100000',
+	};
+
+	if (!payload.gasPrice && !payload.maxFeePerGas) {
+		defaultPayload.maxFeePerGas = context.web3.utils.numberToHex(INITIAL_BASE_FEE);
+	}
+
+	const signed = await context.web3.eth.accounts.signTransaction(
 		{
-			from: GENESIS_ACCOUNT,
-			to: GENESIS_ACCOUNT,
-			value: value,
-			gasPrice: gasPrice,
-			gas: gas,
-			nonce: nonce,
+			...defaultPayload,
+			...payload,
 		},
 		GENESIS_ACCOUNT_PRIVATE_KEY
 	);
 
-	await customRequest(context.web3, 'eth_sendRawTransaction', [tx.rawTransaction]);
-	return tx;
+	await customRequest(context.web3, 'eth_sendRawTransaction', [signed.rawTransaction]);
+	return signed;
 }
 
 // Create a block and finalize it.

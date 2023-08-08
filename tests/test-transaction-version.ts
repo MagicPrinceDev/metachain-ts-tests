@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { expect } from 'chai';
 import { step } from 'mocha-steps';
 
-import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, CHAIN_ID } from './config';
+import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, CHAIN_ID, INITIAL_BASE_FEE } from './config';
 import { generate, describeWithMetachain } from './util';
 
 // We use ethers library in this test as apparently web3js's types are not fully EIP-1559 compliant yet.
@@ -12,18 +12,19 @@ describeWithMetachain('Metachain RPC (Transaction Version)', (context) => {
 
 	async function sendTransaction(context, payload: any) {
 		let signer = new ethers.Wallet(GENESIS_ACCOUNT_PRIVATE_KEY, context.ethersjs);
-		// Ethers internally matches the locally calculated transaction hash against the one returned as a response.
-		// Test would fail in case of mismatch.
+
 		const tx = await signer.sendTransaction(payload);
 		return tx;
 	}
 
 	step('should handle Legacy transaction type 0', async function () {
+		// Ethers internally matches the locally calculated transaction hash against the one returned as a response.
+		// Test would fail in case of mismatch.
 		let tx = {
 			from: GENESIS_ACCOUNT,
 			data: TEST_CONTRACT_BYTECODE,
 			value: '0x00',
-			gasPrice: '0x3B9ACA00',
+			gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 			type: 0,
 			nonce: 0,
 			gasLimit: '0x100000',
@@ -49,7 +50,7 @@ describeWithMetachain('Metachain RPC (Transaction Version)', (context) => {
 			from: GENESIS_ACCOUNT,
 			data: TEST_CONTRACT_BYTECODE,
 			value: '0x00',
-			gasPrice: '0x3B9ACA00',
+			gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 			type: 1,
 			accessList: [],
 			nonce: 1,
@@ -76,7 +77,7 @@ describeWithMetachain('Metachain RPC (Transaction Version)', (context) => {
 			from: GENESIS_ACCOUNT,
 			data: TEST_CONTRACT_BYTECODE,
 			value: '0x00',
-			maxFeePerGas: '0x3B9ACA00',
+			maxFeePerGas: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 			maxPriorityFeePerGas: '0x01',
 			type: 2,
 			accessList: [],

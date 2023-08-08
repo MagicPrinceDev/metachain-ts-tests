@@ -2,34 +2,25 @@ import { ethers } from 'ethers';
 import { expect } from 'chai';
 import { step } from 'mocha-steps';
 
-import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, CHAIN_ID } from './config';
-import { generate, describeWithMetachain, customRequest } from './util';
+import { CHAIN_ID } from './config';
+import { generate, describeWithMetachain, customRequest, sendTransaction } from './util';
 
 // We use ethers library in this test as apparently web3js's types are not fully EIP-1559 compliant yet.
 describeWithMetachain('Metachain RPC (Max Priority Fee Per Gas)', (context) => {
-	async function sendTransaction(context, payload: any) {
-		let signer = new ethers.Wallet(GENESIS_ACCOUNT_PRIVATE_KEY, context.ethersjs);
-		// Ethers internally matches the locally calculated transaction hash against the one returned as a response.
-		// Test would fail in case of mismatch.
-		const tx = await signer.sendTransaction(payload);
-		return tx;
-	}
-
 	let nonce = 0;
 
 	async function createBlocks(block_count, priority_fees) {
 		for (var b = 0; b < block_count; b++) {
 			for (var p = 0; p < priority_fees.length; p++) {
+				// Ethers internally matches the locally calculated transaction hash against the one returned as a response.
+				// Test would fail in case of mismatch.
 				await sendTransaction(context, {
-					from: GENESIS_ACCOUNT,
 					to: '0x0000000000000000000000000000000000000000',
 					data: '0x',
-					value: '0x00',
 					maxFeePerGas: '0x3B9ACA00',
 					maxPriorityFeePerGas: context.web3.utils.numberToHex(priority_fees[p]),
-					accessList: [],
 					nonce: nonce,
-					gasLimit: '0x5208',
+					gas: '0x5208',
 					chainId: CHAIN_ID,
 				});
 				nonce++;

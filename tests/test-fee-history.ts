@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { expect } from 'chai';
 import { step } from 'mocha-steps';
 
-import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, CHAIN_ID } from './config';
+import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, CHAIN_ID, INITIAL_BASE_FEE } from './config';
 import { generate, describeWithMetachain, customRequest } from './util';
 
 // We use ethers library in this test as apparently web3js's types are not fully EIP-1559 compliant yet.
@@ -39,7 +39,7 @@ describeWithMetachain('Metachain RPC (Fee History)', (context) => {
 					from: GENESIS_ACCOUNT,
 					data: TEST_CONTRACT_BYTECODE,
 					value: '0x00',
-					maxFeePerGas: '0x3B9ACA00',
+					maxFeePerGas: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 					maxPriorityFeePerGas: context.web3.utils.numberToHex(priority_fees[p]),
 					accessList: [],
 					nonce: nonce,
