@@ -101,7 +101,7 @@ describeWithMetachain('Metachain RPC (Block)', (context) => {
 		expect(block).to.include({
 			// author: "0x0000000000000000000000000000000000000000",
 			// difficulty: "0",
-			extraData: '0x',
+			extraData: '0x4446493a20313038',
 			gasLimit: `0x${ETH_BLOCK_GAS_LIMIT.toString(16)}`,
 			gasUsed: '0x0',
 			//hash: "0x14fe6f7c93597f79b901f8b5d7a84277a90915b8d355959b587e18de34f1dc17",
