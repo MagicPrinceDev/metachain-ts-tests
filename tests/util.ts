@@ -226,7 +226,7 @@ export async function startMetachainNode(provider?: string): Promise<{
 						'v0/transferdomain/evm-dvm/dest-formats': ['p2pkh', 'bech32'],
 					},
 				});
-				await generate(client, 1);
+				await generate(client, 2);
 
 				resolve();
 			}
