@@ -196,7 +196,7 @@ export async function startMetachainNode(provider?: string): Promise<{
 						"v0/params/feature/evm": "true",
 					},
 				});
-				await generate(client, 1);
+				await generate(client, 2);
 
 				resolve();
 			}
