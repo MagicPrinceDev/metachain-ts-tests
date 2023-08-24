@@ -1,34 +1,40 @@
-import { expect } from "chai";
-import { step } from "mocha-steps";
+import { expect } from 'chai';
+import { step } from 'mocha-steps';
 
-import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, GENESIS_ACCOUNT_BALANCE, EXISTENTIAL_DEPOSIT } from "./config";
-import { generate, describeWithMetachain, customRequest } from "./util";
+import {
+	GENESIS_ACCOUNT,
+	GENESIS_ACCOUNT_PRIVATE_KEY,
+	GENESIS_ACCOUNT_BALANCE,
+	EXISTENTIAL_DEPOSIT,
+	INITIAL_BASE_FEE,
+} from './config';
+import { generate, describeWithMetachain, customRequest } from './util';
 
-describeWithMetachain("Metachain RPC (Balance)", (context) => {
-	const TEST_ACCOUNT = "0x1111111111111111111111111111111111111111";
+describeWithMetachain('Metachain RPC (Balance)', (context) => {
+	const TEST_ACCOUNT = '0x1111111111111111111111111111111111111111';
 
-	step("genesis balance is setup correctly", async function () {
+	step('genesis balance is setup correctly', async function () {
 		const balance = await context.web3.eth.getBalance(GENESIS_ACCOUNT);
-		expect(await context.web3.eth.getBalance(GENESIS_ACCOUNT)).to.equal(GENESIS_ACCOUNT_BALANCE);
+		expect(balance).to.equal(GENESIS_ACCOUNT_BALANCE);
 	});
 
-	step("balance to be updated after transfer", async function () {
+	step('balance to be updated after transfer', async function () {
 		await generate(context.client, 1);
 		this.timeout(2000);
 
-		const value = "0x200"; // 512, must be higher than ExistentialDeposit
-		const gasPrice = "0x3B9ACA00"; // 1000000000
+		const value = '0x200'; // 512, must be higher than ExistentialDeposit
+		const gasPrice = context.web3.utils.numberToHex(INITIAL_BASE_FEE);
 		const tx = await context.web3.eth.accounts.signTransaction(
 			{
 				from: GENESIS_ACCOUNT,
 				to: TEST_ACCOUNT,
 				value: value,
 				gasPrice: gasPrice,
-				gas: "0x100000",
+				gas: '0x100000',
 			},
 			GENESIS_ACCOUNT_PRIVATE_KEY
 		);
-		await customRequest(context.web3, "eth_sendRawTransaction", [tx.rawTransaction]);
+		await customRequest(context.web3, 'eth_sendRawTransaction', [tx.rawTransaction]);
 
 		// GENESIS_ACCOUNT_BALANCE - (21000 * gasPrice) - value;
 		const expectedGenesisBalance = (
