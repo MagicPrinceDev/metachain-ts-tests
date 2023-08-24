@@ -15,7 +15,7 @@ const TEST_CONTRACT_DEPLOYED_BYTECODE = Test.deployedBytecode;
 const FORCE_GAS_CONTRACT_BYTECODE = ForceGasLimit.bytecode;
 const FORCE_GAS_CONTRACT_ABI = ForceGasLimit.abi as AbiItem[];
 
-describeWithMetachain('Metachain RPC (estimate gas historically)', (context) => {
+describeWithMetachain('Metachain RPC (estimate gas historically)', async (context) => {
 	const TEST_CONTRACT_BYTECODE = Storage.bytecode;
 	const TEST_CONTRACT_ABI = Storage.abi as AbiItem[];
 
@@ -51,7 +51,7 @@ describeWithMetachain('Metachain RPC (estimate gas historically)', (context) => 
 			)
 			.encodeABI();
 
-		const ESTIMATE_AT_1 = context.web3.utils.hexToNumber(
+		const ESTIMATE_AT_2 = context.web3.utils.hexToNumber(
 			(
 				await customRequest(context.web3, 'eth_estimateGas', [
 					{
@@ -78,7 +78,7 @@ describeWithMetachain('Metachain RPC (estimate gas historically)', (context) => 
 		await generate(context.client, 1);
 
 		// Estimate what a sstore reset costs at block number 2
-		const ESTIMATE_AT_2 = context.web3.utils.hexToNumber(
+		const ESTIMATE_AT_3 = context.web3.utils.hexToNumber(
 			(
 				await customRequest(context.web3, 'eth_estimateGas', [
 					{
@@ -90,23 +90,22 @@ describeWithMetachain('Metachain RPC (estimate gas historically)', (context) => 
 		);
 
 		// SSTORE over an existing storage is cheaper
-		expect(ESTIMATE_AT_2).to.be.lt(ESTIMATE_AT_1 as number);
+		expect(ESTIMATE_AT_3).to.be.lt(ESTIMATE_AT_2 as number);
 
 		// Estimate what a sstore reset costed at block number 1, queried historically
-		const ESTIMATE_AT_1_QUERY = context.web3.utils.hexToNumber(
+		const ESTIMATE_AT_2_QUERY = context.web3.utils.hexToNumber(
 			(
 				await customRequest(context.web3, 'eth_estimateGas', [
 					{
 						to: contractAddress,
 						data: SSTORE_SET_DATA,
 					},
-					1,
+					2,
 				])
 			).result
 		);
-
 		// Expect to get the original estimated gas at block 1
-		expect(ESTIMATE_AT_1_QUERY).to.be.eq(ESTIMATE_AT_1);
+		expect(ESTIMATE_AT_2_QUERY).to.be.eq(ESTIMATE_AT_2);
 	});
 });
 
