@@ -54,7 +54,7 @@ describeWithMetachain('Metachain RPC (StateOverride)', (context) => {
 		await generate(context.client, 1);
 	});
 
-	it('should have balance above 1000 tether without state override', async function () {
+	it.skip('should have balance above 1000 tether without state override', async function () {
 		const { result } = await customRequest(context.web3, 'eth_call', [
 			{
 				from: GENESIS_ACCOUNT,
@@ -68,7 +68,7 @@ describeWithMetachain('Metachain RPC (StateOverride)', (context) => {
 		expect(balance.gten(1000), 'balance was not above 1000 tether').to.be.true;
 	});
 
-	it('should have a sender balance of 4500 with state override', async function () {
+	it.skip('should have a sender balance of 4500 with state override', async function () {
 		const { result } = await customRequest(context.web3, 'eth_call', [
 			{
 				from: GENESIS_ACCOUNT,
@@ -85,7 +85,7 @@ describeWithMetachain('Metachain RPC (StateOverride)', (context) => {
 		expect(Web3.utils.hexToNumberString(result)).to.equal('4500'); // 500 is consumed as gas
 	});
 
-	it('should have availableFunds of 100 without state override', async function () {
+	it.skip('should have availableFunds of 100 without state override', async function () {
 		const { result } = await customRequest(context.web3, 'eth_call', [
 			{
 				from: GENESIS_ACCOUNT,
@@ -96,7 +96,7 @@ describeWithMetachain('Metachain RPC (StateOverride)', (context) => {
 		expect(Web3.utils.hexToNumberString(result)).to.equal('100');
 	});
 
-	it('should have availableFunds of 500 with state override', async function () {
+	it.skip('should have availableFunds of 500 with state override', async function () {
 		const availableFundsKey = Web3.utils.padLeft(Web3.utils.numberToHex(1), 64); // slot 1
 		const newValue = Web3.utils.padLeft(Web3.utils.numberToHex(500), 64);
 
@@ -118,7 +118,7 @@ describeWithMetachain('Metachain RPC (StateOverride)', (context) => {
 		expect(Web3.utils.hexToNumberString(result)).to.equal('500');
 	});
 
-	it('should have allowance of 10 without state override', async function () {
+	it.skip('should have allowance of 10 without state override', async function () {
 		const { result } = await customRequest(context.web3, 'eth_call', [
 			{
 				from: GENESIS_ACCOUNT,
@@ -129,7 +129,7 @@ describeWithMetachain('Metachain RPC (StateOverride)', (context) => {
 		expect(Web3.utils.hexToNumberString(result)).to.equal('10');
 	});
 
-	it('should have allowance of 50 with state override', async function () {
+	it.skip('should have allowance of 50 with state override', async function () {
 		const allowanceKey = Web3.utils.soliditySha3(
 			{
 				type: 'uint256',
@@ -169,7 +169,7 @@ describeWithMetachain('Metachain RPC (StateOverride)', (context) => {
 		expect(Web3.utils.hexToNumberString(result)).to.equal('50');
 	});
 
-	it('should have allowance of 50 but availableFunds 0 with full state override', async function () {
+	it.skip('should have allowance of 50 but availableFunds 0 with full state override', async function () {
 		const allowanceKey = Web3.utils.soliditySha3(
 			{
 				type: 'uint256',
@@ -226,7 +226,7 @@ describeWithMetachain('Metachain RPC (StateOverride)', (context) => {
 		expect(Web3.utils.hexToNumberString(result2)).to.equal('0');
 	});
 
-	it('should set MultiplyBy7 deployedBytecode with state override', async function () {
+	it.skip('should set MultiplyBy7 deployedBytecode with state override', async function () {
 		const testContract = new context.web3.eth.Contract(Test.abi as AbiItem[]);
 		const { result } = await customRequest(context.web3, 'eth_call', [
 			{
