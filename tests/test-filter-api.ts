@@ -72,10 +72,9 @@ describeWithMetachain('Metachain RPC (EthFilterApi)', (context) => {
 		expect(poll.result[0]).to.be.eq(block.hash);
 
 		await generate(context.client, 1);
+		block = await context.web3.eth.getBlock("latest");
 		await generate(context.client, 1);
-
-		block = await context.web3.eth.getBlock(2);
-		let block_b = await context.web3.eth.getBlock(3);
+		let block_b = await context.web3.eth.getBlock("latest");
 		poll = await customRequest(context.web3, 'eth_getFilterChanges', ['0x3']);
 
 		expect(poll.result.length).to.be.eq(2);
@@ -150,11 +149,9 @@ describeWithMetachain('Metachain RPC (EthFilterApi)', (context) => {
 		let uninstall = await customRequest(context.web3, 'eth_uninstallFilter', [filterId]);
 		expect(uninstall.result).to.be.eq(true);
 
-		// Should return error if does not exist.
-		let r = await customRequest(context.web3, 'eth_uninstallFilter', [filterId]);
-		expect(r.error).to.include({
-			message: 'Filter id 6 does not exist.',
-		});
+		// Should be false when filter ID does not exist.
+		let res = await customRequest(context.web3, 'eth_uninstallFilter', [filterId]);
+		expect(res.result).to.be.eq(false);
 	});
 
 	step('should drain the filter pool.', async function () {
