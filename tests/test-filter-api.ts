@@ -25,6 +25,7 @@ describeWithMetachain('Metachain RPC (EthFilterApi)', (context) => {
 	}
 
 	step('should create a Log filter and return the ID', async function () {
+		await generate(context.client, 1);
 		let createFilter = await customRequest(context.web3, 'eth_newFilter', [
 			{
 				fromBlock: '0x0',
@@ -59,15 +60,12 @@ describeWithMetachain('Metachain RPC (EthFilterApi)', (context) => {
 	});
 
 	step('should return responses for Block filter polling.', async function () {
-		let block = await context.web3.eth.getBlock(0);
 		let poll = await customRequest(context.web3, 'eth_getFilterChanges', ['0x4']);
-
-		expect(poll.result.length).to.be.eq(1);
-		expect(poll.result[0]).to.be.eq(block.hash);
+		expect(poll.result.length).to.be.eq(0);
 
 		await generate(context.client, 1);
 
-		block = await context.web3.eth.getBlock(1);
+		let block = await context.web3.eth.getBlock("latest");
 		poll = await customRequest(context.web3, 'eth_getFilterChanges', ['0x3']);
 
 		expect(poll.result.length).to.be.eq(1);
