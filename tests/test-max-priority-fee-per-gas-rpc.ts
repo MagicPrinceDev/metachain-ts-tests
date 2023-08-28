@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import { expect } from 'chai';
 import { step } from 'mocha-steps';
 
@@ -62,7 +61,7 @@ describeWithMetachain('Metachain RPC (Max Priority Fee Per Gas)', (context) => {
 		}
 
 		let result = (await customRequest(context.web3, 'eth_maxPriorityFeePerGas', [])).result;
-		expect(result).to.be.eq('0x5');
+		expect(result).to.be.eq('0x78');
 	});
 
 	// If in the last 20 blocks at least one is empty (or only contains zero-tip txns), the
@@ -73,11 +72,7 @@ describeWithMetachain('Metachain RPC (Max Priority Fee Per Gas)', (context) => {
 		this.timeout(100000);
 
 		for (let i = 0; i < 10; i++) {
-			await createBlocks(1, [0, 1, 2, 3, 4, 5]);
-		}
-		await generate(context.client, 1);
-		for (let i = 0; i < 9; i++) {
-			await createBlocks(1, [0, 1, 2, 3, 4, 5]);
+			await createBlocks(20, [0, 0]);
 		}
 
 		let result = (await customRequest(context.web3, 'eth_maxPriorityFeePerGas', [])).result;
