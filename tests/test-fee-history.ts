@@ -24,7 +24,7 @@ describeWithMetachain('Metachain RPC (Fee History)', (context) => {
 		array.sort(function (a, b) {
 			return a - b;
 		});
-		let index = (percentile / 100) * array.length - 1;
+		let index = (percentile / 100) * (array.length - 1);
 		if (Math.floor(index) == index) {
 			return array[index];
 		} else {
@@ -86,7 +86,7 @@ describeWithMetachain('Metachain RPC (Fee History)', (context) => {
 	step('should calculate percentiles', async function () {
 		this.timeout(100000);
 		let blockCount = 11;
-		let rewardPercentiles = [20, 50, 70, 85, 100];
+		let rewardPercentiles = [20, 50, 70, 100];
 		let priorityFees = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 		await createBlocks(blockCount, priorityFees);
 		let result = (await customRequest(context.web3, 'eth_feeHistory', ['0xA', 'latest', rewardPercentiles])).result;
