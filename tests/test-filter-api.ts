@@ -65,16 +65,16 @@ describeWithMetachain('Metachain RPC (EthFilterApi)', (context) => {
 
 		await generate(context.client, 1);
 
-		let block = await context.web3.eth.getBlock("latest");
+		let block = await context.web3.eth.getBlock('latest');
 		poll = await customRequest(context.web3, 'eth_getFilterChanges', ['0x3']);
 
 		expect(poll.result.length).to.be.eq(1);
 		expect(poll.result[0]).to.be.eq(block.hash);
 
 		await generate(context.client, 1);
-		block = await context.web3.eth.getBlock("latest");
+		block = await context.web3.eth.getBlock('latest');
 		await generate(context.client, 1);
-		let block_b = await context.web3.eth.getBlock("latest");
+		let block_b = await context.web3.eth.getBlock('latest');
 		poll = await customRequest(context.web3, 'eth_getFilterChanges', ['0x3']);
 
 		expect(poll.result.length).to.be.eq(2);
@@ -170,4 +170,18 @@ describeWithMetachain('Metachain RPC (EthFilterApi)', (context) => {
 			message: 'Filter id 6 does not exist.',
 		});
 	});
+
+	// not configured yet
+	// step('should have a filter pool max size of 500.', async function () {
+	// 	const maxFilterPool = 500;
+
+	// 	for (let i = 0; i < maxFilterPool; i++) {
+	// 		await customRequest(context.web3, 'eth_newBlockFilter', []);
+	// 	}
+
+	// 	let r = await customRequest(context.web3, 'eth_newBlockFilter', []);
+	// 	expect(r.error).to.include({
+	// 		message: 'Filter pool is full (limit 500).',
+	// 	});
+	// });
 });
