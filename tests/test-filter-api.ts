@@ -82,34 +82,6 @@ describeWithMetachain('Metachain RPC (EthFilterApi)', (context) => {
 		expect(poll.result[1]).to.be.eq(block_b.hash);
 	});
 
-	step('should return responses for Log filter polling.', async function () {
-		// Create contract.
-		let tx = await sendTransaction(context);
-		await generate(context.client, 1);
-		let receipt = await context.web3.eth.getTransactionReceipt(tx.transactionHash);
-
-		expect(receipt.logs.length).to.be.eq(1);
-
-		// Create a filter for the created contract.
-		let createFilter = await customRequest(context.web3, 'eth_newFilter', [
-			{
-				fromBlock: '0x0',
-				toBlock: 'latest',
-				address: receipt.contractAddress,
-				topics: receipt.logs[0].topics,
-			},
-		]);
-		let poll = await customRequest(context.web3, 'eth_getFilterChanges', [createFilter.result]);
-
-		expect(poll.result.length).to.be.eq(1);
-		expect(poll.result[0].address.toLowerCase()).to.be.eq(receipt.contractAddress.toLowerCase());
-		expect(poll.result[0].topics).to.be.deep.eq(receipt.logs[0].topics);
-
-		// A subsequent request must be empty.
-		poll = await customRequest(context.web3, 'eth_getFilterChanges', [createFilter.result]);
-		expect(poll.result.length).to.be.eq(0);
-	});
-
 	step('should return response for raw Log filter request.', async function () {
 		// Create contract.
 		let tx = await sendTransaction(context);
@@ -152,6 +124,34 @@ describeWithMetachain('Metachain RPC (EthFilterApi)', (context) => {
 		// Should be false when filter ID does not exist.
 		let res = await customRequest(context.web3, 'eth_uninstallFilter', [filterId]);
 		expect(res.result).to.be.eq(false);
+	});
+
+	step('should return responses for Log filter polling.', async function () {
+		// Create contract.
+		let tx = await sendTransaction(context);
+		await generate(context.client, 1);
+		let receipt = await context.web3.eth.getTransactionReceipt(tx.transactionHash);
+
+		expect(receipt.logs.length).to.be.eq(1);
+
+		// Create a filter for the created contract.
+		let createFilter = await customRequest(context.web3, 'eth_newFilter', [
+			{
+				fromBlock: '0x0',
+				toBlock: 'latest',
+				address: receipt.contractAddress,
+				topics: receipt.logs[0].topics,
+			},
+		]);
+		let poll = await customRequest(context.web3, 'eth_getFilterChanges', [createFilter.result]);
+
+		expect(poll.result.length).to.be.eq(1);
+		expect(poll.result[0].address.toLowerCase()).to.be.eq(receipt.contractAddress.toLowerCase());
+		expect(poll.result[0].topics).to.be.deep.eq(receipt.logs[0].topics);
+
+		// A subsequent request must be empty.
+		poll = await customRequest(context.web3, 'eth_getFilterChanges', [createFilter.result]);
+		expect(poll.result.length).to.be.eq(0);
 	});
 
 	step('should drain the filter pool.', async function () {
