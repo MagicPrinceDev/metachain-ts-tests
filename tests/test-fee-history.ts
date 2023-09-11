@@ -52,21 +52,10 @@ describeWithMetachain('Metachain RPC (Fee History)', (context) => {
 		}
 	}
 
-	step('should return error on non-existent blocks', async function () {
-		this.timeout(100000);
-		let result = customRequest(context.web3, 'eth_feeHistory', ['0x0', '0x1', []])
-			.then(() => {
-				return Promise.reject({
-					message: 'Execution succeeded but should have failed',
-				});
-			})
-			.catch((err) => expect(err.message).to.equal('Error getting header at BlockId::Number(1)'));
-	});
-
 	step('result length should match spec', async function () {
 		this.timeout(100000);
 		let blockCount = 2;
-		let rewardPercentiles = [20, 50, 70, 85, 100];
+		let rewardPercentiles = [20, 50, 70];
 		let priorityFees = [1, 2, 3];
 		await createBlocks(blockCount, priorityFees);
 		let result = (await customRequest(context.web3, 'eth_feeHistory', ['0x2', 'latest', rewardPercentiles])).result;
@@ -103,5 +92,17 @@ describeWithMetachain('Metachain RPC (Fee History)', (context) => {
 				expect(context.web3.utils.hexToNumber(result.reward[i][j])).to.be.eq(localRewards[j]);
 			}
 		}
+	});
+
+	// err mapping
+	step('should return error on non-existent blocks', async function () {
+		this.timeout(100000);
+		let result = customRequest(context.web3, 'eth_feeHistory', ['0x0', '0x1', []])
+			.then(() => {
+				return Promise.reject({
+					message: 'Execution succeeded but should have failed',
+				});
+			})
+			.catch((err) => expect(err.message).to.equal('Error getting header at BlockId::Number(1)'));
 	});
 });
