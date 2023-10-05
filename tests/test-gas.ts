@@ -190,7 +190,7 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 		const createReceipt = await customRequest(context.web3, 'eth_sendRawTransaction', [tx.rawTransaction]);
 		await generate(context.client, 1);
 		// expect((createReceipt as any).error.message).to.equal('exceeds block gas limit');
-		const errMsg = `Custom error: Could not publish raw transaction: ${tx.rawTransaction} reason: Test EvmTxTx execution failed:\nevm tx failed to validate gas limit higher than max_gas_per_block`;
+		const errMsg = `Custom error: Could not publish raw transaction: ${tx.rawTransaction} reason: Test EvmTx execution failed:\nevm tx failed to pre-validate gas limit higher than max_gas_per_block`;
 		expect((createReceipt as any).error.message).to.equal(errMsg);
 	});
 });

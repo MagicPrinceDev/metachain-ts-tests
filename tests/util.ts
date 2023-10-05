@@ -199,6 +199,7 @@ export async function startMetachainNode(provider?: string): Promise<{
 			// }
 
 			binaryLogs.push(chunk);
+			// console.log(binaryLogs.map((chunk) => chunk.toString()).join('\n'));
 
 			if (chunk.toString().match(/addcon thread start/)) {
 				if (!provider || provider == 'http') {
@@ -223,12 +224,6 @@ export async function startMetachainNode(provider?: string): Promise<{
 						// Enable evm
 						'v0/params/feature/evm': 'true',
 						'v0/params/feature/transferdomain': 'true',
-						'v0/transferdomain/dvm-evm/enabled': 'true',
-						'v0/transferdomain/dvm-evm/src-formats': ['p2pkh', 'bech32'],
-						'v0/transferdomain/dvm-evm/dest-formats': ['erc55'],
-						'v0/transferdomain/evm-dvm/src-formats': ['erc55'],
-						'v0/transferdomain/evm-dvm/auth-formats': ['bech32-erc55'],
-						'v0/transferdomain/evm-dvm/dest-formats': ['p2pkh', 'bech32'],
 					},
 				});
 				await generate(client, 2);
