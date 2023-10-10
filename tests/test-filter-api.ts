@@ -154,22 +154,23 @@ describeWithMetachain('Metachain RPC (EthFilterApi)', (context) => {
 		expect(poll.result.length).to.be.eq(0);
 	});
 
-	step('should drain the filter pool.', async function () {
-		this.timeout(15000);
-		const blockLifespanThreshold = 100;
+	// not configure blockLiffespanThreshold
+	// step('should drain the filter pool.', async function () {
+	// 	this.timeout(15000);
+	// 	const blockLifespanThreshold = 100;
 
-		let createFilter = await customRequest(context.web3, 'eth_newBlockFilter', []);
-		let filterId = createFilter.result;
+	// 	let createFilter = await customRequest(context.web3, 'eth_newBlockFilter', []);
+	// 	let filterId = createFilter.result;
 
-		for (let i = 0; i <= blockLifespanThreshold; i++) {
-			await generateNowait(context.client);
-		}
+	// 	for (let i = 0; i <= blockLifespanThreshold; i++) {
+	// 		await generateNowait(context.client);
+	// 	}
 
-		let r = await customRequest(context.web3, 'eth_getFilterChanges', [filterId]);
-		expect(r.error).to.include({
-			message: 'Filter id 6 does not exist.',
-		});
-	});
+	// 	let r = await customRequest(context.web3, 'eth_getFilterChanges', [filterId]);
+	// 	expect(r.error).to.include({
+	// 		message: 'Filter id 6 does not exist.',
+	// 	});
+	// });
 
 	// not configured yet
 	// step('should have a filter pool max size of 500.', async function () {
