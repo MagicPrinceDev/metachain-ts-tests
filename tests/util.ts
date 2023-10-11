@@ -211,9 +211,11 @@ export async function startMetachainNode(provider?: string): Promise<{
 			if (chunk.toString().match(/addcon thread start/)) {
 				if (!provider || provider == 'http') {
 					// This is needed as the EVM runtime needs to warmup with a first call
-					await web3.eth.getChainId();
+					const chainId = await web3.eth.getChainId();
+					console.log('chainId: ', chainId);
 				}
 
+				console.log('before clear timeout');
 				clearTimeout(timer);
 				console.log('cleared timeout');
 
