@@ -210,6 +210,8 @@ export async function startMetachainNode(provider?: string): Promise<{
 				}
 
 				clearTimeout(timer);
+				console.log('cleared timeout');
+
 				if (!DISPLAY_LOG) {
 					binary.stderr.off('data', onData);
 					binary.stdout.off('data', onData);
