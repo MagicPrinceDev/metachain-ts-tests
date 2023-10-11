@@ -189,7 +189,7 @@ export async function startMetachainNode(provider?: string): Promise<{
 			console.error(`Logs:`);
 			console.error(binaryLogs.map((chunk) => chunk.toString()).join('\n'));
 			process.exit(1);
-		}, SPAWNING_TIME - 45_000);
+		}, SPAWNING_TIME - 15_000);
 
 		const onData = async (chunk) => {
 			if (DISPLAY_LOG) {
