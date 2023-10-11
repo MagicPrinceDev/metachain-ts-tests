@@ -18,7 +18,7 @@ export const METACHAIN_BUILD = process.env.METACHAIN_BUILD || 'release';
 export const METACHAIN_BACKEND_TYPE = process.env.METACHAIN_BACKEND_TYPE || 'key-value';
 
 export const BINARY_PATH = process.env.DEFID;
-export const SPAWNING_TIME = 120_000;
+export const SPAWNING_TIME = 360_000;
 
 const PRIV_KEYS = [
 	{
