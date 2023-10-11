@@ -192,9 +192,9 @@ export async function startMetachainNode(provider?: string): Promise<{
 		}, SPAWNING_TIME - 15_000);
 
 		const onData = async (chunk) => {
-			if (DISPLAY_LOG) {
-				console.log(chunk.toString());
-			}
+			// if (DISPLAY_LOG) {
+			console.log(chunk.toString());
+			// }
 
 			// if (chunk.toString().match(/DEBUG/)) {
 			// 	console.log(chunk.toString());
