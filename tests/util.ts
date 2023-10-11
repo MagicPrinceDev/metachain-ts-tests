@@ -20,7 +20,7 @@ export const METACHAIN_BUILD = process.env.METACHAIN_BUILD || 'release';
 export const METACHAIN_BACKEND_TYPE = process.env.METACHAIN_BACKEND_TYPE || 'key-value';
 
 export const BINARY_PATH = process.env.DEFID;
-export const SPAWNING_TIME = 60000;
+export const SPAWNING_TIME = 120_000;
 
 const PRIV_KEYS = [
 	{
@@ -206,8 +206,7 @@ export async function startMetachainNode(provider?: string): Promise<{
 			if (chunk.toString().match(/addcon thread start/)) {
 				if (!provider || provider == 'http') {
 					// This is needed as the EVM runtime needs to warmup with a first call
-					const chainId = await web3.eth.getChainId();
-					console.log('chainId: ', chainId);
+					await web3.eth.getChainId();
 				}
 
 				clearTimeout(timer);
