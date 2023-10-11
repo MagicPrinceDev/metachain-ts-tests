@@ -9,9 +9,9 @@ import { CHAIN_ID, GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, INITIAL_BASE_FE
 
 import { JsonRpcClient } from '@defichain/jellyfish-api-jsonrpc';
 
-export const PORT = 19555;
-export const RPC_PORT = 19554;
-export const ETH_PORT = 19551;
+export const PORT = 24555;
+export const RPC_PORT = 24554;
+export const ETH_PORT = 24551;
 export const WS_PORT = 9999;
 
 export const DISPLAY_LOG = process.env.RUST_LOG || false;
@@ -134,6 +134,8 @@ export async function startMetachainNode(provider?: string): Promise<{
 		'-gen=0',
 		'-rpcpassword=test',
 		'-rpcuser=test',
+		`-rpcport=${RPC_PORT}`,
+		`-ethrpcport=${ETH_PORT}`,
 		'-jellyfish_regtest',
 		'-logtimemicros',
 		'-logthreadnames',
