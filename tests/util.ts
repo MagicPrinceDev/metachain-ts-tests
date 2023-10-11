@@ -20,7 +20,7 @@ export const METACHAIN_BUILD = process.env.METACHAIN_BUILD || 'release';
 export const METACHAIN_BACKEND_TYPE = process.env.METACHAIN_BACKEND_TYPE || 'key-value';
 
 export const BINARY_PATH = process.env.DEFID;
-export const SPAWNING_TIME = 180_000;
+export const SPAWNING_TIME = 120_000;
 
 const PRIV_KEYS = [
 	{
@@ -192,9 +192,9 @@ export async function startMetachainNode(provider?: string): Promise<{
 		}, SPAWNING_TIME - 15_000);
 
 		const onData = async (chunk) => {
-			// if (DISPLAY_LOG) {
-			console.log(chunk.toString());
-			// }
+			if (DISPLAY_LOG) {
+				console.log(chunk.toString());
+			}
 
 			// if (chunk.toString().match(/DEBUG/)) {
 			// 	console.log(chunk.toString());
