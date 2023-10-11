@@ -10,8 +10,6 @@ import { CHAIN_ID, GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, INITIAL_BASE_FE
 import { JsonRpcClient } from '@defichain/jellyfish-api-jsonrpc';
 
 export const PORT = 24555;
-export const RPC_PORT = 24554;
-export const ETH_PORT = 24551;
 export const WS_PORT = 9999;
 
 export const DISPLAY_LOG = process.env.RUST_LOG || false;
@@ -114,6 +112,13 @@ export async function startMetachainNode(provider?: string): Promise<{
 	ethersjs: ethers.JsonRpcProvider;
 	client: JsonRpcClient;
 }> {
+	let random3 = Math.floor(Math.random() * (999 - 100 + 1) + 100);
+	const RPC_PORT = `24${random3}`;
+	console.log('RPC_PORT: ', RPC_PORT);
+	random3 = Math.floor(Math.random() * (999 - 100 + 1) + 100);
+	const ETH_PORT = `24${random3}`;
+	console.log('ETH_PORT: ', ETH_PORT);
+
 	var web3;
 	if (!provider || provider == 'http') {
 		web3 = new Web3(`http://127.0.0.1:${ETH_PORT}`);
