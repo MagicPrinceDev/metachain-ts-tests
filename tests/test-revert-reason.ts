@@ -38,9 +38,7 @@ describeWithMetachain('Metachain RPC (Revert Reason)', (context) => {
 		try {
 			await contract.methods.max10(30).call();
 		} catch (error) {
-			expect(error.message).to.be.eq(
-				'Returned error: VM Exception while processing transaction: revert Value must not be greater than 10.'
-			);
+			expect(error.message).to.be.eq('Returned error: execution reverted: Value must not be greater than 10.');
 		}
 	});
 });
