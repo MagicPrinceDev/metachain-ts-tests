@@ -4,8 +4,8 @@ import { AbiItem } from 'web3-utils';
 import InvalidOpcode from '../build/contracts/InvalidOpcode.json';
 import Test from '../build/contracts/Test.json';
 import {
-	GENESIS_ACCOUNT,
-	GENESIS_ACCOUNT_PRIVATE_KEY,
+	GENESIS_ALICE,
+	GENESIS_ALICE_PRIVATE_KEY,
 	FIRST_CONTRACT_ADDRESS,
 	ETH_BLOCK_GAS_LIMIT,
 	INITIAL_BASE_FEE,
@@ -54,7 +54,7 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 		// expect(estimationVariance(binarySearchEstimation, oneOffEstimation)).to.be.lessThan(1);
 		expect(
 			await context.web3.eth.estimateGas({
-				from: GENESIS_ACCOUNT,
+				from: GENESIS_ALICE,
 				data: Test.bytecode,
 			})
 		).to.equal(oneOffEstimation);
@@ -88,7 +88,7 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 		// Sanity check expect a variance of 10%.
 		// expect(estimationVariance(binarySearchEstimation, oneOffEstimation)).to.be.lessThan(1);
 		const contract = new context.web3.eth.Contract(TEST_CONTRACT_ABI, FIRST_CONTRACT_ADDRESS, {
-			from: GENESIS_ACCOUNT,
+			from: GENESIS_ALICE,
 			gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 		});
 
@@ -102,7 +102,7 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 		// Sanity check expect a variance of 10%.
 		// expect(estimationVariance(binarySearchEstimation, oneOffEstimation)).to.be.lessThan(1);
 		const contract = new context.web3.eth.Contract(TEST_CONTRACT_ABI, FIRST_CONTRACT_ADDRESS, {
-			from: GENESIS_ACCOUNT,
+			from: GENESIS_ALICE,
 		});
 
 		expect(await contract.methods.multiply(3).estimateGas()).to.equal(oneOffEstimation);
@@ -118,7 +118,7 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 		let result = (
 			await customRequest(context.web3, 'eth_estimateGas', [
 				{
-					from: GENESIS_ACCOUNT,
+					from: GENESIS_ALICE,
 					data: Test.bytecode,
 					accessList: [
 						{
@@ -134,13 +134,13 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 
 	it('eth_estimateGas 0x0 gasPrice is equivalent to not setting one', async function () {
 		let result = await context.web3.eth.estimateGas({
-			from: GENESIS_ACCOUNT,
+			from: GENESIS_ALICE,
 			data: Test.bytecode,
-			gasPrice: '0x0',
+			gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 		});
 		expect(result).to.equal(196701);
 		result = await context.web3.eth.estimateGas({
-			from: GENESIS_ACCOUNT,
+			from: GENESIS_ALICE,
 			data: Test.bytecode,
 		});
 		expect(result).to.equal(196701);
@@ -149,12 +149,12 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 	it('tx gas limit below ETH_BLOCK_GAS_LIMIT', async function () {
 		const tx = await context.web3.eth.accounts.signTransaction(
 			{
-				from: GENESIS_ACCOUNT,
+				from: GENESIS_ALICE,
 				data: Test.bytecode,
 				gas: ETH_BLOCK_GAS_LIMIT - 1,
 				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 			},
-			GENESIS_ACCOUNT_PRIVATE_KEY
+			GENESIS_ALICE_PRIVATE_KEY
 		);
 		const createReceipt = await customRequest(context.web3, 'eth_sendRawTransaction', [tx.rawTransaction]);
 		await generate(context.client, 1);
@@ -164,12 +164,12 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 	it('tx gas limit equal ETH_BLOCK_GAS_LIMIT', async function () {
 		const tx = await context.web3.eth.accounts.signTransaction(
 			{
-				from: GENESIS_ACCOUNT,
+				from: GENESIS_ALICE,
 				data: Test.bytecode,
 				gas: ETH_BLOCK_GAS_LIMIT,
 				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 			},
-			GENESIS_ACCOUNT_PRIVATE_KEY
+			GENESIS_ALICE_PRIVATE_KEY
 		);
 		const createReceipt = await customRequest(context.web3, 'eth_sendRawTransaction', [tx.rawTransaction]);
 		await generate(context.client, 1);
@@ -180,12 +180,12 @@ describeWithMetachain('Metachain RPC (Gas)', (context) => {
 	it('tx gas limit larger ETH_BLOCK_GAS_LIMIT', async function () {
 		const tx = await context.web3.eth.accounts.signTransaction(
 			{
-				from: GENESIS_ACCOUNT,
+				from: GENESIS_ALICE,
 				data: Test.bytecode,
 				gas: ETH_BLOCK_GAS_LIMIT + 1,
 				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 			},
-			GENESIS_ACCOUNT_PRIVATE_KEY
+			GENESIS_ALICE_PRIVATE_KEY
 		);
 		const createReceipt = await customRequest(context.web3, 'eth_sendRawTransaction', [tx.rawTransaction]);
 		await generate(context.client, 1);
@@ -202,13 +202,13 @@ describeWithMetachain('Metachain RPC (Invalid opcode estimate gas)', (context) =
 	before(async () => {
 		const tx = await context.web3.eth.accounts.signTransaction(
 			{
-				from: GENESIS_ACCOUNT,
+				from: GENESIS_ALICE,
 				data: INVALID_OPCODE_BYTECODE,
 				value: '0x00',
 				gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
 				gas: '0x100000',
 			},
-			GENESIS_ACCOUNT_PRIVATE_KEY
+			GENESIS_ALICE_PRIVATE_KEY
 		);
 		const txHash = (await customRequest(context.web3, 'eth_sendRawTransaction', [tx.rawTransaction])).result;
 		await generate(context.client, 1);
@@ -217,7 +217,7 @@ describeWithMetachain('Metachain RPC (Invalid opcode estimate gas)', (context) =
 
 	// it('should estimate gas with invalid opcode', async function () {
 	// 	let estimate = await context.web3.eth.estimateGas({
-	// 		from: GENESIS_ACCOUNT,
+	// 		from: GENESIS_ALICE,
 	// 		to: contractAddess,
 	// 		data: '0x28b5e32b', // selector for the contract's `call` method
 	// 	});

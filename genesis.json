@@ -1,14 +1,17 @@
 {
-    "coinbase"   : "0x8888f1f195afa192cfee860698584c030f4c9db1",
-    "difficulty" : "0x020000",
-    "gasLimit"   : "0x2fefd8",
-    "mixHash"    : "0x2c85bcbce56429100b2108254bb56906257582aeafcbd682bc9af67a9f5aee46",
-    "nonce"      : "0x78cc16f7b4f65485",
-    "parentHash" : "0x0000000000000000000000000000000000000000000000000000000000000000",
-    "timestamp"  : "0x54c98c81",
-    "alloc"      : {
-        "0x6be02d1d3665660d22ff9624b7be0551ee1ac91b": {
-            "balance" : "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE0B"
-        }
-    }
+	"coinbase": "0x8888f1f195afa192cfee860698584c030f4c9db1",
+	"difficulty": "0x020000",
+	"gasLimit": "0x2fefd8",
+	"mixHash": "0x2c85bcbce56429100b2108254bb56906257582aeafcbd682bc9af67a9f5aee46",
+	"nonce": "0x78cc16f7b4f65485",
+	"parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+	"timestamp": "0x54c98c81",
+	"alloc": {
+		"0x6be02d1d3665660d22ff9624b7be0551ee1ac91b": {
+			"balance": "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE0B"
+		},
+		"0x9b8a4af42140d8a4c153a822f02571a1dd037e89": {
+			"balance": "0xDE0B6B3A7640000"
+		}
+	}
 }

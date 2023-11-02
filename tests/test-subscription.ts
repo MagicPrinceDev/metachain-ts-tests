@@ -27,7 +27,6 @@ describeWithMetachainWs('Metachain RPC (Subscription)', (context) => {
 		return tx;
 	}
 
-	// TODO(): unready
 	// step('should connect', async function () {
 	// 	await generate(context.client, 1);
 	// 	// @ts-ignore

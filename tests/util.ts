@@ -5,7 +5,14 @@ import { TransactionConfig } from 'web3-core';
 import { spawn, ChildProcess } from 'child_process';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
-import { CHAIN_ID, GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, INITIAL_BASE_FEE } from './config';
+import {
+	CHAIN_ID,
+	GENESIS_ACCOUNT,
+	GENESIS_ACCOUNT_PRIVATE_KEY,
+	GENESIS_ALICE,
+	GENESIS_ALICE_PRIVATE_KEY,
+	INITIAL_BASE_FEE,
+} from './config';
 
 import { JsonRpcClient } from '@defichain/jellyfish-api-jsonrpc';
 
@@ -224,7 +231,9 @@ export async function startMetachainNode(provider?: string): Promise<{
 
 				await client.wallet.importPrivKey(PRIV_KEYS[0].ownerPrivKey);
 				await client.wallet.importPrivKey(PRIV_KEYS[0].operatorPrivKey);
+
 				await client.wallet.importPrivKey(GENESIS_ACCOUNT_PRIVATE_KEY.substring(2));
+				await client.wallet.importPrivKey(GENESIS_ALICE_PRIVATE_KEY.substring(2));
 
 				await generate(client, 105);
 
@@ -237,20 +246,6 @@ export async function startMetachainNode(provider?: string): Promise<{
 					},
 				});
 				await generate(client, 2);
-
-				await client.call(
-					'transferdomain',
-					[
-						[
-							{
-								src: { address: PRIV_KEYS[0].ownerAuthAddress, amount: '100@DFI', domain: 2 },
-								dst: { address: GENESIS_ACCOUNT, amount: '100@DFI', domain: 3 },
-							},
-						],
-					],
-					'number'
-				);
-				await generate(client, 1);
 
 				resolve();
 			}

@@ -1,6 +1,12 @@
 import { assert, expect } from 'chai';
 import { step } from 'mocha-steps';
-import { ETH_BLOCK_GAS_LIMIT, GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, INITIAL_BASE_FEE } from './config';
+import {
+	ETH_BLOCK_GAS_LIMIT,
+	GENESIS_ACCOUNT,
+	GENESIS_ALICE,
+	GENESIS_ACCOUNT_PRIVATE_KEY,
+	INITIAL_BASE_FEE,
+} from './config';
 
 import { describeWithMetachain, customRequest, generate } from './util';
 import { AbiItem } from 'web3-utils';
@@ -113,7 +119,7 @@ describeWithMetachain('Metachain RPC (RPC execution)', (context) => {
 	step('should call with gas limit under block gas limit', async function () {
 		const result = await customRequest(context.web3, 'eth_call', [
 			{
-				from: GENESIS_ACCOUNT,
+				from: GENESIS_ALICE,
 				gas: `0x${(ETH_BLOCK_GAS_LIMIT - 1).toString(16)}`,
 				data: TEST_CONTRACT_BYTECODE,
 			},
@@ -125,7 +131,7 @@ describeWithMetachain('Metachain RPC (RPC execution)', (context) => {
 	step('should call with gas limit up to 10x block gas limit', async function () {
 		const result = await customRequest(context.web3, 'eth_call', [
 			{
-				from: GENESIS_ACCOUNT,
+				from: GENESIS_ALICE,
 				gas: `0x${(ETH_BLOCK_GAS_LIMIT * 10).toString(16)}`,
 				data: TEST_CONTRACT_BYTECODE,
 			},
@@ -151,7 +157,7 @@ describeWithMetachain('Metachain RPC (RPC execution)', (context) => {
 	step('should estimateGas with gas limit under block gas limit', async function () {
 		const { result } = await customRequest(context.web3, 'eth_estimateGas', [
 			{
-				from: GENESIS_ACCOUNT,
+				from: GENESIS_ALICE,
 				gas: `0x${ETH_BLOCK_GAS_LIMIT.toString(16)}`,
 				data: TEST_CONTRACT_BYTECODE,
 			},
@@ -229,7 +235,7 @@ describeWithMetachain('Metachain RPC (RPC execution)', (context) => {
 	step('`input` field alias is properly deserialized', async function () {
 		const result = await customRequest(context.web3, 'eth_call', [
 			{
-				from: GENESIS_ACCOUNT,
+				from: GENESIS_ALICE,
 				gas: `0x${(ETH_BLOCK_GAS_LIMIT - 1).toString(16)}`,
 				input: TEST_CONTRACT_BYTECODE,
 			},
