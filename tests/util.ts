@@ -10,6 +10,8 @@ import { CHAIN_ID, GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY, INITIAL_BASE_FE
 import { JsonRpcClient } from '@defichain/jellyfish-api-jsonrpc';
 
 export const PORT = 24555;
+export const RPC_PORT = 24554;
+export const ETH_PORT = 24551;
 export const WS_PORT = 9999;
 
 export const DISPLAY_LOG = process.env.RUST_LOG || false;
@@ -88,7 +90,7 @@ export async function generate(
 	maxTries: number = 1000000
 ): Promise<void> {
 	if (!address) {
-		address = await client.wallet.getNewAddress();
+		address = PRIV_KEYS[0].ownerAuthAddress;
 	}
 	for (let minted = 0, tries = 0; minted < nblocks && tries < maxTries; tries++) {
 		const result = await client.call('generatetoaddress', [1, address, 1], 'number');
@@ -112,13 +114,6 @@ export async function startMetachainNode(provider?: string): Promise<{
 	ethersjs: ethers.JsonRpcProvider;
 	client: JsonRpcClient;
 }> {
-	let random3 = Math.floor(Math.random() * (999 - 100 + 1) + 100);
-	const RPC_PORT = `24${random3}`;
-	console.log('RPC_PORT: ', RPC_PORT);
-	random3 = Math.floor(Math.random() * (999 - 100 + 1) + 100);
-	const ETH_PORT = `24${random3}`;
-	console.log('ETH_PORT: ', ETH_PORT);
-
 	var web3;
 	if (!provider || provider == 'http') {
 		web3 = new Web3(`http://127.0.0.1:${ETH_PORT}`);
@@ -219,9 +214,7 @@ export async function startMetachainNode(provider?: string): Promise<{
 					}
 				}
 
-				console.log('before clear timeout');
 				clearTimeout(timer);
-				console.log('cleared timeout');
 
 				if (!DISPLAY_LOG) {
 					binary.stderr.off('data', onData);
@@ -231,9 +224,11 @@ export async function startMetachainNode(provider?: string): Promise<{
 
 				await client.wallet.importPrivKey(PRIV_KEYS[0].ownerPrivKey);
 				await client.wallet.importPrivKey(PRIV_KEYS[0].operatorPrivKey);
+				await client.wallet.importPrivKey(GENESIS_ACCOUNT_PRIVATE_KEY.substring(2));
 
 				await generate(client, 105);
 
+				await client.account.utxosToAccount({ [PRIV_KEYS[0].ownerAuthAddress]: '200@DFI' });
 				await client.masternode.setGov({
 					ATTRIBUTES: {
 						// Enable evm
@@ -242,6 +237,20 @@ export async function startMetachainNode(provider?: string): Promise<{
 					},
 				});
 				await generate(client, 2);
+
+				await client.call(
+					'transferdomain',
+					[
+						[
+							{
+								src: { address: PRIV_KEYS[0].ownerAuthAddress, amount: '100@DFI', domain: 2 },
+								dst: { address: GENESIS_ACCOUNT, amount: '100@DFI', domain: 3 },
+							},
+						],
+					],
+					'number'
+				);
+				await generate(client, 1);
 
 				resolve();
 			}
