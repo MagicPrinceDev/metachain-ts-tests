@@ -16,7 +16,7 @@ describeWithMetachain('Metachain RPC (Max Priority Fee Per Gas)', (context) => {
                 await sendTransaction(context, {
                     to: '0x0000000000000000000000000000000000000000',
                     data: '0x',
-                    maxFeePerGas: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
+                    maxFeePerGas: context.web3.utils.numberToHex(150_000_000_000),
                     maxPriorityFeePerGas: context.web3.utils.numberToHex(priority_fees[p]),
                     nonce: nonce,
                     gas: '0x5208',
