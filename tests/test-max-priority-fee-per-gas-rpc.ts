@@ -60,6 +60,7 @@ describeWithMetachain('Metachain RPC (Max Priority Fee Per Gas)', (context) => {
         }
 
         // Suggested fee defaults to percentil: 60%
+        priority_fee--;
         let suggest_fee = context.web3.utils.numberToHex(Math.floor(priority_fee * 0.6));
         let result = (await customRequest(context.web3, 'eth_maxPriorityFeePerGas', [])).result;
         expect(result).to.be.eq(suggest_fee);
