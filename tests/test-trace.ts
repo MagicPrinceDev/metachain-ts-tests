@@ -1,0 +1,86 @@
+import { expect } from 'chai';
+import { step } from 'mocha-steps';
+import { AbiItem } from 'web3-utils';
+
+import {
+    GENESIS_ACCOUNT,
+    GENESIS_ALICE,
+    GENESIS_ACCOUNT_PRIVATE_KEY,
+    GENESIS_ALICE_PRIVATE_KEY,
+    INITIAL_BASE_FEE,
+} from './config';
+import { generate, describeWithMetachain, customRequest } from './util';
+import Incrementor from '../build/contracts/Incrementor.json';
+
+describeWithMetachain('Metachain RPC (Trace)', (context) => {
+    // gen(1) is required to enable evm feature in defichain ecosys
+    step('should be at block 1', async function () {
+        expect(await context.web3.eth.getBlockNumber()).to.equal(1);
+    });
+
+    it("should replay over an intermediate state", async function () {
+        const TEST_INCREMENTOR_BYTECODE = Incrementor.bytecode;
+        const TEST_INCREMENTOR_ABI = Incrementor.abi as AbiItem[];
+
+        const contract = new context.web3.eth.Contract(TEST_INCREMENTOR_ABI);
+        const tx = await context.web3.eth.accounts.signTransaction(
+            {
+                from: GENESIS_ACCOUNT,
+                data: TEST_INCREMENTOR_BYTECODE,
+                value: '0x00',
+                gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
+                gas: '0x100000',
+            },
+            GENESIS_ACCOUNT_PRIVATE_KEY
+        );
+        await customRequest(context.web3, 'eth_sendRawTransaction', [tx.rawTransaction]);
+        await generate(context.client, 1);
+        let receipt0 = await context.web3.eth.getTransactionReceipt(tx.transactionHash);
+        let contractAddress = receipt0.contractAddress;
+
+        // In our case, the total number of transactions == the max value of the incrementer.
+        // If we trace the last transaction of the block, should return the total number of
+        // transactions we executed (10).
+        // If we trace the 5th transaction, should return 5 and so on.
+        //
+        // So we set 5 different target txs for a single block: the 1st, 3 intermediate, and
+        // the last.
+        await generate(context.client, 1);
+        const totalTxs = 10;
+        const targets = [1, 2, 5, 8, 10];
+        const txs: any[] = [];
+        const nonce = await context.web3.eth.getTransactionCount(GENESIS_ALICE);
+
+        // Create 10 transactions in a block.
+        for (let numTxs = nonce; numTxs <= nonce + totalTxs; numTxs++) {
+            const callTx = await context.web3.eth.accounts.signTransaction(
+                {
+                    from: GENESIS_ALICE,
+                    to: contractAddress,
+                    data: contract.methods.incr(1).encodeABI(),
+                    nonce: numTxs,
+                    value: '0x00',
+                    gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
+                    gas: '0x100000',
+                },
+                GENESIS_ALICE_PRIVATE_KEY,
+            );
+            const { result: data } = await customRequest(context.web3, 'eth_sendRawTransaction', [callTx.rawTransaction]);
+            txs.push(data);
+        }
+        await generate(context.client, 1);
+
+        // Trace 5 target transactions on it.
+        for (const target of targets) {
+            const index = target - 1;
+
+            await context.web3.eth.getTransactionReceipt(txs[index]);
+
+            const { result: traceTx } = await customRequest(context.web3, 'debug_traceTransaction', [txs[index]]);
+            console.log(traceTx);
+
+            const evmResult = context.web3.utils.hexToNumber("0x" + traceTx.returnValue);
+            expect(evmResult).to.equal(target);
+        }
+    });
+});
