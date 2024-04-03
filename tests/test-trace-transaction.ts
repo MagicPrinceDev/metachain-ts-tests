@@ -9,7 +9,13 @@ import {
     GENESIS_ALICE_PRIVATE_KEY,
     INITIAL_BASE_FEE,
 } from './config';
-import { generate, describeWithMetachain, customRequest, nestedSingle } from './util';
+
+import {
+    generate,
+    describeWithMetachain,
+    customRequest,
+    nestedSingle,
+} from './util';
 
 // Import custom tracers
 import BS_TRACER from '../tracer/blockscout_tracer.min.json'
@@ -18,8 +24,9 @@ import BS_TRACER_V2 from '../tracer/blockscout_tracer_v2.min.json'
 // Import contracts
 import Incrementor from '../build/contracts/Incrementor.json';
 import Looper from '../build/contracts/Looper.json';
+import TraceCallee from '../build/contracts/TraceCallee.json';
 
-describeWithMetachain('Metachain RPC (Trace)', (context) => {
+describeWithMetachain('Metachain RPC (TraceTransaction)', (context) => {
     // gen(1) is required to enable evm feature in defichain ecosys
     step('should be at block 1', async function () {
         expect(await context.web3.eth.getBlockNumber()).to.equal(1);
@@ -284,5 +291,72 @@ describeWithMetachain('Metachain RPC (Trace)', (context) => {
         await generate(context.client, 1);
         const { result: traceTx } = await customRequest(context.web3, 'debug_traceTransaction', [data]);
         expect(traceTx.gas).to.be.eq("0x5208"); // 21_000 gas for a transfer.
+    });
+
+    // Test 9
+    it("should format as request (Call)", async function () {
+        const { result: send } = await nestedSingle(context);
+        await generate(context.client, 1);
+        const { result: traceTx } = await customRequest(
+            context.web3,
+            'debug_traceTransaction',
+            [send, { tracer: "callTracer" }]);
+        const res = traceTx;
+        // Fields
+        expect(Object.keys(res).sort()).to.deep.equal([
+            "calls",
+            "from",
+            "gas",
+            "gasUsed",
+            "input",
+            "output",
+            "to",
+            "type",
+            "value",
+        ]);
+        // Type
+        expect(res.type).to.be.equal("CALL");
+        // Nested calls
+        const calls = res.calls;
+        expect(calls.length).to.be.eq(1);
+        const nested_call = calls[0];
+        expect(res.to).to.be.equal(nested_call.from);
+        expect(nested_call.type).to.be.equal("CALL");
+    });
+
+    // Test 10
+    it("should format as request (Create)", async function () {
+        const TEST_TRACE_CALLEE_BYTECODE = TraceCallee.bytecode;
+        const tx = await context.web3.eth.accounts.signTransaction(
+            {
+                from: GENESIS_ACCOUNT,
+                data: TEST_TRACE_CALLEE_BYTECODE,
+                value: '0x00',
+                gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
+                gas: '0x100000',
+            },
+            GENESIS_ACCOUNT_PRIVATE_KEY
+        );
+        await customRequest(context.web3, 'eth_sendRawTransaction', [tx.rawTransaction]);
+        await generate(context.client, 1);
+
+        const { result: traceTx } = await customRequest(
+            context.web3,
+            'debug_traceTransaction',
+            [tx.transactionHash, { tracer: "callTracer" }]);
+
+        // Fields
+        expect(Object.keys(traceTx).sort()).to.deep.equal([
+            "from",
+            "gas",
+            "gasUsed",
+            "input",
+            "output",
+            "to",
+            "type",
+            "value",
+        ]);
+        // Type
+        expect(traceTx.type).to.be.equal("CREATE");
     });
 });

@@ -130,6 +130,7 @@ export async function nestedCall(
     context: { web3: Web3; client: JsonRpcClient },
     callerAddr: string,
     calleeAddr: string,
+    nonce: number,
 ) {
     const TEST_TRACE_CALLER_ABI = TraceCaller.abi as AbiItem[];
     const contract = new context.web3.eth.Contract(TEST_TRACE_CALLER_ABI);
@@ -137,6 +138,7 @@ export async function nestedCall(
         {
             from: GENESIS_ALICE,
             to: callerAddr,
+            nonce: nonce,
             data: contract.methods.someAction(calleeAddr, 6).encodeABI(),
             gas: '0x100000',
             value: '0x00',
@@ -148,7 +150,8 @@ export async function nestedCall(
 
 export async function nestedSingle(context: { web3: Web3; client: JsonRpcClient }) {
     const addresses = await createContracts(context);
-    return await nestedCall(context, addresses[0], addresses[1])
+    let nonce = await context.web3.eth.getTransactionCount(GENESIS_ALICE);
+    return await nestedCall(context, addresses[0], addresses[1], nonce)
 }
 
 // Create a block and finalize it.
