@@ -143,7 +143,7 @@ describeWithMetachain('Metachain RPC (Trace)', (context) => {
     });
 
     // Test 4
-    it("should format as request (Blockscout)", async function () {
+    it("trace blockscout - should format as request", async function () {
         const { result: send } = await nestedSingle(context);
         await generate(context.client, 1);
         const { result: traceTx } = await customRequest(
@@ -163,7 +163,7 @@ describeWithMetachain('Metachain RPC (Trace)', (context) => {
     });
 
     // Test 5
-    it("Trace blockscout v2 - AllEthTxTypes", async function () {
+    it("trace blockscout-v2 - AllEthTxTypes", async function () {
         const { result: send } = await nestedSingle(context);
         await generate(context.client, 1);
         const { result: traceTx } = await customRequest(
@@ -183,11 +183,8 @@ describeWithMetachain('Metachain RPC (Trace)', (context) => {
     });
 
     // Test 6
-    it("Trace blockscout v2 should trace correctly out of gas tx execution", async function () {
+    it("trace blockscout-v2 should trace correctly out of gas tx execution", async function () {
         const TEST_LOOPER_BYTECODE = Looper.bytecode;
-        const TEST_LOOPER_ABI = Looper.abi as AbiItem[];
-
-        const contract = new context.web3.eth.Contract(TEST_LOOPER_ABI);
         const tx = await context.web3.eth.accounts.signTransaction(
             {
                 from: GENESIS_ACCOUNT,
@@ -224,5 +221,68 @@ describeWithMetachain('Metachain RPC (Trace)', (context) => {
         );
         expect(traceTx.length).to.be.eq(1);
         expect(traceTx[0].error).to.be.equal("out of gas");
+    });
+
+    // Test 7
+    it("trace blockscout should trace correctly out of gas tx execution", async function () {
+        const TEST_LOOPER_BYTECODE = Looper.bytecode;
+        const tx = await context.web3.eth.accounts.signTransaction(
+            {
+                from: GENESIS_ACCOUNT,
+                data: TEST_LOOPER_BYTECODE,
+                value: '0x00',
+                gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
+                gas: '0x100000',
+            },
+            GENESIS_ACCOUNT_PRIVATE_KEY
+        );
+        await customRequest(context.web3, 'eth_sendRawTransaction', [tx.rawTransaction]);
+        await generate(context.client, 1);
+        let receipt0 = await context.web3.eth.getTransactionReceipt(tx.transactionHash);
+        let contractAddress = receipt0.contractAddress;
+        const callTx = await context.web3.eth.accounts.signTransaction(
+            {
+                from: GENESIS_ALICE,
+                to: contractAddress,
+                data: '0x5bec9e67',
+                value: '0x00',
+                gas: '0x100000',
+            },
+            GENESIS_ALICE_PRIVATE_KEY,
+        );
+        const { result: data } = await customRequest(
+            context.web3,
+            'eth_sendRawTransaction',
+            [callTx.rawTransaction],
+        );
+        await generate(context.client, 1);
+        const { result: traceTx } = await customRequest(
+            context.web3, 'debug_traceTransaction',
+            [data, { tracer: BS_TRACER.body }],
+        );
+        expect(traceTx.length).to.be.eq(1);
+        expect(traceTx[0].error).to.be.equal("out of gas");
+    });
+
+    // Test 8
+    it("should trace correctly transfers (raw)", async function () {
+        const callTx = await context.web3.eth.accounts.signTransaction(
+            {
+                from: GENESIS_ALICE,
+                to: GENESIS_ACCOUNT,
+                data: '0x',
+                value: "0x10000000",
+                gas: '0xdb3b',
+            },
+            GENESIS_ALICE_PRIVATE_KEY,
+        );
+        const { result: data } = await customRequest(
+            context.web3,
+            'eth_sendRawTransaction',
+            [callTx.rawTransaction],
+        );
+        await generate(context.client, 1);
+        const { result: traceTx } = await customRequest(context.web3, 'debug_traceTransaction', [data]);
+        expect(traceTx.gas).to.be.eq("0x5208"); // 21_000 gas for a transfer.
     });
 });
