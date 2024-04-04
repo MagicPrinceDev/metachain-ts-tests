@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
 import { ethers } from 'ethers';
 import { JsonRpcResponse } from 'web3-core-helpers';
 import { TransactionConfig } from 'web3-core';
@@ -13,6 +14,8 @@ import {
     GENESIS_ALICE_PRIVATE_KEY,
     INITIAL_BASE_FEE,
 } from './config';
+import TraceCallee from '../build/contracts/TraceCallee.json';
+import TraceCaller from '../build/contracts/TraceCaller.json';
 
 import { JsonRpcClient } from '@defichain/jellyfish-api-jsonrpc';
 
@@ -85,6 +88,70 @@ export async function sendTransaction(context: { web3: Web3; client: JsonRpcClie
 
     await customRequest(context.web3, 'eth_sendRawTransaction', [signed.rawTransaction]);
     return signed;
+}
+
+export async function createContracts(context: { web3: Web3; client: JsonRpcClient }) {
+    const TEST_TRACE_CALLER_BYTECODE = TraceCaller.bytecode;
+    const nonce = await context.web3.eth.getTransactionCount(GENESIS_ACCOUNT);
+    const caller_tx = await context.web3.eth.accounts.signTransaction(
+        {
+            from: GENESIS_ACCOUNT,
+            data: TEST_TRACE_CALLER_BYTECODE,
+            value: '0x00',
+            gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
+            gas: '0x100000',
+            nonce: nonce,
+        },
+        GENESIS_ACCOUNT_PRIVATE_KEY
+    );
+    await customRequest(context.web3, 'eth_sendRawTransaction', [caller_tx.rawTransaction]);
+
+    const TEST_TRACE_CALLEE_BYTECODE = TraceCallee.bytecode;
+    const callee_tx = await context.web3.eth.accounts.signTransaction(
+        {
+            from: GENESIS_ACCOUNT,
+            data: TEST_TRACE_CALLEE_BYTECODE,
+            value: '0x00',
+            gasPrice: context.web3.utils.numberToHex(INITIAL_BASE_FEE),
+            gas: '0x100000',
+            nonce: nonce + 1,
+        },
+        GENESIS_ACCOUNT_PRIVATE_KEY
+    );
+    await customRequest(context.web3, 'eth_sendRawTransaction', [callee_tx.rawTransaction]);
+    await generate(context.client, 1);
+
+    let caller_receipt = await context.web3.eth.getTransactionReceipt(caller_tx.transactionHash);
+    let callee_receipt = await context.web3.eth.getTransactionReceipt(callee_tx.transactionHash);
+    return [caller_receipt.contractAddress, callee_receipt.contractAddress]
+}
+
+export async function nestedCall(
+    context: { web3: Web3; client: JsonRpcClient },
+    callerAddr: string,
+    calleeAddr: string,
+    nonce: number,
+) {
+    const TEST_TRACE_CALLER_ABI = TraceCaller.abi as AbiItem[];
+    const contract = new context.web3.eth.Contract(TEST_TRACE_CALLER_ABI);
+    const signed = await context.web3.eth.accounts.signTransaction(
+        {
+            from: GENESIS_ALICE,
+            to: callerAddr,
+            nonce: nonce,
+            data: contract.methods.someAction(calleeAddr, 6).encodeABI(),
+            gas: '0x100000',
+            value: '0x00',
+        },
+        GENESIS_ALICE_PRIVATE_KEY
+    );
+    return await customRequest(context.web3, 'eth_sendRawTransaction', [signed.rawTransaction]);
+}
+
+export async function nestedSingle(context: { web3: Web3; client: JsonRpcClient }) {
+    const addresses = await createContracts(context);
+    let nonce = await context.web3.eth.getTransactionCount(GENESIS_ALICE);
+    return await nestedCall(context, addresses[0], addresses[1], nonce)
 }
 
 // Create a block and finalize it.
