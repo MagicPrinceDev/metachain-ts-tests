@@ -25,7 +25,7 @@ describeWithMetachain('Metachain RPC (TraceBlock)', (context) => {
     });
 
     // Test 1
-    it("trace blockscout should trace correctly out of gas tx execution", async function () {
+    it("should trace block by number and hash", async function () {
         const contracts = await createContracts(context);
 
         let nonce = await context.web3.eth.getTransactionCount(GENESIS_ALICE);
