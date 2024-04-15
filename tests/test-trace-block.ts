@@ -59,7 +59,7 @@ describeWithMetachain('Metachain RPC (TraceBlock)', (context) => {
             [block_number, { tracer: "callTracer" }],
         );
         expect(block.transactions.length).to.be.equal(traceTxByNum.length);
-        traceTxByNum.forEach((trace: { [key: string]: any }) => {
+        traceTxByNum.forEach(({ result: trace }) => {
             expect(trace.calls.length).to.be.equal(1);
             expect(Object.keys(trace).sort()).to.deep.equal([
                 "calls",
@@ -80,7 +80,7 @@ describeWithMetachain('Metachain RPC (TraceBlock)', (context) => {
             [block_hash, { tracer: "callTracer" }],
         );
         expect(block.transactions.length).to.be.equal(traceTxByHash.length);
-        traceTxByHash.forEach((trace: { [key: string]: any }) => {
+        traceTxByNum.forEach(({ result: trace }) => {
             expect(trace.calls.length).to.be.equal(1);
             expect(Object.keys(trace).sort()).to.deep.equal([
                 "calls",
